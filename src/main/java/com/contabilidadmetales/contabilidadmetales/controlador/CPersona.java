@@ -34,8 +34,7 @@ public class CPersona {
             return false;
         }
 
-    }
-    
+    }    
 
     public persona Leerpersonas(int id) {
         try {
@@ -62,7 +61,7 @@ public class CPersona {
 
     }
 
-    public ArrayList listaPresios(int TipoPersona) {
+    public ArrayList listaPersonas(int TipoPersona) {
         try {
             Statement ps = null;
             CConexion objetoConexion = new CConexion();

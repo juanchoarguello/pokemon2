@@ -9,7 +9,9 @@ import com.contabilidadmetales.contabilidadmetales.modelo.Inventario;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.*;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
 
 public class CInventario {
 
@@ -23,10 +25,12 @@ public class CInventario {
     public CInventario() throws SQLException {
         conexion = conectar();
     }
+
     public void cerrarConexion() throws SQLException {
         // Cerrar la conexión con la base de datos
         conexion.close();
     }
+
     public void agregarMaterial(double peso, String descripcion, int idMaterial, double valor) {
         try {
             // Insertar un nuevo registro en la tabla de inventario
@@ -41,9 +45,10 @@ public class CInventario {
             ex.printStackTrace();
         }
     }
+
     public void obtenerSumaPesoYValorPorFechas(LocalDate fechaInferior, LocalDate fechaSuperior, JTextField a, JTextField b) {
         try {
-          
+
             String sql = "SELECT SUM(peso) as sumaPeso, SUM(Valor) as sumaValor FROM inventario WHERE fecha BETWEEN ? AND ?";
             PreparedStatement preparedStatement = conexion.prepareStatement(sql);
             preparedStatement.setString(1, fechaInferior.atStartOfDay().toString());
@@ -59,6 +64,7 @@ public class CInventario {
             ex.printStackTrace();
         }
     }
+
     public ArrayList<Inventario> obtenerMaterialesPorFechas(LocalDate fechaInferior, LocalDate fechaSuperior) {
         ArrayList<Inventario> materiales = new ArrayList<>();
         try {
@@ -83,6 +89,7 @@ public class CInventario {
         }
         return materiales;
     }
+
     public ArrayList<Inventario> obtenerMateriales() {
         ArrayList<Inventario> materiales = new ArrayList<>();
         try {
@@ -105,6 +112,7 @@ public class CInventario {
         }
         return materiales;
     }
+
     public boolean eliminarMaterial(int id) {
         try {
             // Eliminar un registro de la tabla de inventario
@@ -120,6 +128,7 @@ public class CInventario {
         }
         return false;
     }
+
     public boolean actualizarMaterial(int id, double peso, String descripcion, int idMaterial, double valor, Timestamp fecha) {
         try {
             // Actualizar un registro de la tabla de inventario
@@ -140,48 +149,53 @@ public class CInventario {
         }
         return false;
     }
-    public ArrayList<Inventario> obtenerMaterialesPorFechasXidMaterial(LocalDate fechaInferior, LocalDate fechaSuperior, int idMaterial) {
-    ArrayList<Inventario> materiales = new ArrayList<>();
-    try {
-        // Obtener los registros de la tabla de inventario dentro del rango de fechas y para el idMaterial especificados
-        String sql = "SELECT * FROM inventario WHERE fecha BETWEEN ? AND ? AND idMaterial = ?";
-        PreparedStatement preparedStatement = conexion.prepareStatement(sql);
-        preparedStatement.setTimestamp(1, Timestamp.valueOf(fechaInferior.atStartOfDay()));
-        preparedStatement.setTimestamp(2, Timestamp.valueOf(fechaSuperior.atStartOfDay()));
-        preparedStatement.setInt(3, idMaterial);
-        ResultSet resultSet = preparedStatement.executeQuery();
-        while (resultSet.next()) {
-            int id = resultSet.getInt("idInventario");
-            double peso = resultSet.getDouble("peso");
-            String descripcion = resultSet.getString("descripcion");
-            double valor = resultSet.getDouble("valor");
-            Timestamp fecha = resultSet.getTimestamp("fecha");
-            Inventario material = new Inventario(id, peso, descripcion, idMaterial, valor, fecha);
-            materiales.add(material);
+
+    public ArrayList<Inventario> obtenerMaterialesPorFechasXidMaterial(JTable cc, LocalDate fechaInferior, LocalDate fechaSuperior, int idMaterial) {
+        ArrayList<Inventario> materiales = new ArrayList<>();
+        DefaultTableModel fa = (DefaultTableModel) cc.getModel();
+        try {
+            // Obtener los registros de la tabla de inventario dentro del rango de fechas y para el idMaterial especificados
+            String sql = "SELECT * FROM inventario WHERE fecha BETWEEN ? AND ? AND idMaterial = ?";
+            PreparedStatement preparedStatement = conexion.prepareStatement(sql);
+            preparedStatement.setTimestamp(1, Timestamp.valueOf(fechaInferior.atStartOfDay()));
+            preparedStatement.setTimestamp(2, Timestamp.valueOf(fechaSuperior.atStartOfDay()));
+            preparedStatement.setInt(3, idMaterial);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                Integer id = resultSet.getInt("idInventario");
+                Double peso = resultSet.getDouble("peso");
+                String descripcion = resultSet.getString("descripcion");
+                Integer idMateriall = resultSet.getInt("idMaterial");
+                Double valor = resultSet.getDouble("valor");
+                Timestamp fecha = resultSet.getTimestamp("fecha");
+                String[] vc = {id.toString(), peso.toString(), descripcion.toString(), idMateriall.toString(),valor.toString(), fecha.toString()};
+                fa.addRow(vc);
+                Inventario material = new Inventario(id, peso, descripcion, idMaterial, valor, fecha);
+                materiales.add(material);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
-    } catch (SQLException ex) {
-        ex.printStackTrace();
+        return materiales;
     }
-    return materiales;
-}
 
     public void obtenerSumaPesoYValorPorFechasYMaterial(LocalDate fechaInferior, LocalDate fechaSuperior, int idMaterial, JTextField a, JTextField b) {
-    try {
-        String sql = "SELECT SUM(peso) as sumaPeso, SUM(Valor) as sumaValor FROM inventario WHERE fecha BETWEEN ? AND ? AND idMaterial = ?";
-        PreparedStatement preparedStatement = conexion.prepareStatement(sql);
-        preparedStatement.setString(1, fechaInferior.atStartOfDay().toString());
-        preparedStatement.setString(2, fechaSuperior.atStartOfDay().toString());
-        preparedStatement.setInt(3, idMaterial);
-        ResultSet resultSet = preparedStatement.executeQuery();
-        if (resultSet.next()) {
-            Double sumaPeso = resultSet.getDouble("sumaPeso");
-            Double sumaValor = resultSet.getDouble("sumaValor");
-            a.setText(sumaPeso.toString());
-            b.setText(sumaValor.toString());
+        try {
+            String sql = "SELECT SUM(peso) as sumaPeso, SUM(Valor) as sumaValor FROM inventario WHERE fecha BETWEEN ? AND ? AND idMaterial = ?";
+            PreparedStatement preparedStatement = conexion.prepareStatement(sql);
+            preparedStatement.setString(1, fechaInferior.atStartOfDay().toString());
+            preparedStatement.setString(2, fechaSuperior.atStartOfDay().toString());
+            preparedStatement.setInt(3, idMaterial);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                Double sumaPeso = resultSet.getDouble("sumaPeso");
+                Double sumaValor = resultSet.getDouble("sumaValor");
+                a.setText(sumaPeso.toString());
+                b.setText(sumaValor.toString());
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
-    } catch (SQLException ex) {
-        ex.printStackTrace();
     }
-}
 
 }

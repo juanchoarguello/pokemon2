@@ -35,6 +35,7 @@ import java.util.Calendar;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JTable;
 
 /**
  *
@@ -160,14 +161,16 @@ public class MetalesDeSantander extends javax.swing.JFrame {
  public void llenarTabla2( LocalDate fechaSuperior,  LocalDate fechainferior,int idMaterial) throws SQLException {
         inve = new CInventario();
         cc = new Materiales();
-        ArrayList<Inventario> materiales = inve.obtenerMaterialesPorFechasXidMaterial(fechainferior, fechaSuperior,idMaterial);
-        DefaultTableModel modeloTabl=(DefaultTableModel)TInventario.getModel();
+          String [] va={"idInventario", "peso", "Descripcion", "idMaterial", "Valor", "fecha"};
+        TInventario.setModel(new DefaultTableModel(va,0));
+        ArrayList<Inventario> materiales = inve.obtenerMaterialesPorFechasXidMaterial(TInventario,fechainferior, fechaSuperior,idMaterial);
+       /* DefaultTableModel modeloTabl=(DefaultTableModel)TInventario.getModel();
         for (Inventario material : materiales) {
             String mate = cc.obtenerNombreMaterial(material.getIdMaterial());
             Object[] fila = {material.getId(), material.getPeso(), material.getDescripcion(), mate, material.getValor(), material.getFecha()};
             modeloTabl.addRow(fila);
         }
-        TInventario.setModel(modeloTabl);
+        TInventario.setModel(modeloTabl);*/
     }
     public void MetodoComboboxInventario(JComboBox Combobox2) {
         cc = new Materiales();
@@ -224,7 +227,8 @@ public class MetalesDeSantander extends javax.swing.JFrame {
         TipoDePersonaComboBox = new javax.swing.JComboBox<>();
         CancelarCuenta = new javax.swing.JButton();
         BotonabonarCC = new javax.swing.JButton();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        tipoCb = new javax.swing.JComboBox<>();
+        jButton8 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel13 = new javax.swing.JLabel();
         ListMaterialesCB2 = new javax.swing.JComboBox<>();
@@ -440,8 +444,21 @@ public class MetalesDeSantander extends javax.swing.JFrame {
             }
         });
 
-        jComboBox1.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Compra", "Venta" }));
+        tipoCb.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
+        tipoCb.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Compra", "Venta" }));
+        tipoCb.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tipoCbActionPerformed(evt);
+            }
+        });
+
+        jButton8.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
+        jButton8.setText("Edit Lista");
+        jButton8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton8ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -453,7 +470,7 @@ public class MetalesDeSantander extends javax.swing.JFrame {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(tipoCb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(TipoDePersonaComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -493,8 +510,13 @@ public class MetalesDeSantander extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(BotonTerminarCuenta, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 761, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 761, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                        .addComponent(jButton8)
+                                        .addGap(177, 177, 177)))
                                 .addComponent(jScrollPane12, javax.swing.GroupLayout.PREFERRED_SIZE, 591, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addContainerGap(16, Short.MAX_VALUE))))
         );
@@ -515,13 +537,15 @@ public class MetalesDeSantander extends javax.swing.JFrame {
                 .addGap(844, 844, 844))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tipoCb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(TipoDePersonaComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2)
                     .addComponent(ListaClientesCuentaCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 429, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(31, 31, 31)
+                .addComponent(jButton8)
+                .addGap(35, 35, 35)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 334, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1255,7 +1279,7 @@ public class MetalesDeSantander extends javax.swing.JFrame {
     private void jTabbedPane1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTabbedPane1MouseClicked
         // TODO add your handling code here:
         listaProbedor = null;
-        listaProbedor = conp.listaPresios(selec());
+        listaProbedor = conp.listaPersonas(selec());
 
     }//GEN-LAST:event_jTabbedPane1MouseClicked
 
@@ -1601,13 +1625,10 @@ public class MetalesDeSantander extends javax.swing.JFrame {
         System.out.println(fechaAnterior);
         System.out.println(fechaActual);
         inve.obtenerSumaPesoYValorPorFechasYMaterial(fechaAnterior, fechaActual, idMaterialo, JTpeso, JTValor);
-        TInventario.setModel(null);
-        TInventario
-        try {
-            this.llenarTabla2( fechaAnterior, fechaAnterior, idMaterialo);
-        } catch (SQLException ex) {
-           
-        }
+        String [] va={"idInventario", "peso", "Descripcion", "idMaterial", "Valor", "fecha"};
+        TInventario.setModel(new DefaultTableModel(va,0));
+        ArrayList<Inventario> ju=inve.obtenerMaterialesPorFechasXidMaterial(TInventario,fechaAnterior, fechaActual, idMaterialo);
+        
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void ListDiasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ListDiasActionPerformed
@@ -1633,6 +1654,16 @@ public class MetalesDeSantander extends javax.swing.JFrame {
     private void ListAños1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ListAños1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_ListAños1ActionPerformed
+
+    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
+        // TODO add your handling code here:
+    Cuentas vv=new Cuentas(tipoCb.getSelectedItem().toString(),TipoDePersonaComboBox.getSelectedItem().toString() );
+    vv.setVisible(true);
+    }//GEN-LAST:event_jButton8ActionPerformed
+
+    private void tipoCbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipoCbActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tipoCbActionPerformed
     Double ValorTotal = 0.0;
     ArrayList<Cuenta> listaCuenta;
     ArrayList<Cuenta> listaCuenta2;
@@ -1640,7 +1671,7 @@ public class MetalesDeSantander extends javax.swing.JFrame {
 
     public void optenerListaProbedor(int tipopersona) {
         listaProbedor = null;
-        listaProbedor = conp.listaPresios(tipopersona);
+        listaProbedor = conp.listaPersonas(tipopersona);
         String[] names = {"Nombre", "Celular", "Identificacion", "Tipo de Documento", "Descripcion"};
         DefaultTableModel model = new DefaultTableModel(names, 0);
         for (persona provedor : listaProbedor) {
@@ -1698,9 +1729,9 @@ public class MetalesDeSantander extends javax.swing.JFrame {
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
+    private javax.swing.JButton jButton8;
     private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JCheckBox jCheckBox3;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel12;
@@ -1760,5 +1791,6 @@ public class MetalesDeSantander extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField4;
     private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JToggleButton jToggleButton2;
+    private javax.swing.JComboBox<String> tipoCb;
     // End of variables declaration//GEN-END:variables
 }
