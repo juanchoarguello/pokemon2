@@ -53,6 +53,7 @@ public class ActualizarListaPrecios extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        setUndecorated(true);
 
         Lista.setColumns(20);
         Lista.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
