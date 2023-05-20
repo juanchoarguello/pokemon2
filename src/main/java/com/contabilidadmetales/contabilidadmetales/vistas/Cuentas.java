@@ -4,13 +4,25 @@
  */
 package com.contabilidadmetales.contabilidadmetales.vistas;
 
-import com.aspose.pdf.internal.imaging.internal.bouncycastle.iana.AEADAlgorithm;
+import com.contabilidadmetales.contabilidadmetales.FacturaPdf;
+import com.contabilidadmetales.contabilidadmetales.controlador.CCuentas;
+import com.contabilidadmetales.contabilidadmetales.controlador.CInventario;
 import com.contabilidadmetales.contabilidadmetales.controlador.CPersona;
+import com.contabilidadmetales.contabilidadmetales.controlador.CPrestamos;
+import com.contabilidadmetales.contabilidadmetales.modelo.Cuenta;
 import com.contabilidadmetales.contabilidadmetales.modelo.Pesada;
 import com.contabilidadmetales.contabilidadmetales.modelo.persona;
+import com.itextpdf.text.DocumentException;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
@@ -18,14 +30,14 @@ import javax.swing.table.DefaultTableModel;
 
 public class Cuentas extends javax.swing.JFrame {
 
+    ArrayList<persona> listaProbedor;
     ArrayList<Pesada> pesadas;
     ArrayList<persona> ListaPersonas;
     CPersona objetopersona;
     int tipo = 0;
-
     public void getTipo(String TipoPersona) {
-        ListaPersonas=null;
-        objetopersona=null;
+        ListaPersonas = null;
+        objetopersona = null;
         switch (TipoPersona) {
             case "Proveedor":
                 tipo = 1;
@@ -35,26 +47,23 @@ public class Cuentas extends javax.swing.JFrame {
                 break;
             default:
         }
-        objetopersona=new CPersona();
-         ListaPersonas = objetopersona.listaPersonas(tipo);
-          Vector<String> items = new Vector<>();
+        objetopersona = new CPersona();
+        ListaPersonas = objetopersona.listaPersonas(tipo);
+        Vector<String> items = new Vector<>();
         for (persona ListaPersona : ListaPersonas) {
-            items.add(ListaPersona.getNombre());
+            items.add(ListaPersona.getId() + "_" + ListaPersona.getNombre());
         }
         ComboBoxModel<String> aModel = new DefaultComboBoxModel<>(items);
         ListaXclienteCB.setModel(aModel);
-       
     }
 
-    public Cuentas(String TipoCuenta,String TipoPersona ) {
-        pesadas=new ArrayList<>();
+    public Cuentas(String TipoPersona) {
+        pesadas = new ArrayList<>();
         initComponents();
         objetopersona = new CPersona();
         getTipo(TipoPersona);
         this.setDefaultCloseOperation(this.DISPOSE_ON_CLOSE);
     }
-    
-    ArrayList<persona> listaProbedor;
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -266,8 +275,8 @@ public class Cuentas extends javax.swing.JFrame {
         }
     }
     private void TipoDePersonaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TipoDePersonaActionPerformed
-        String TipoPersona=TipoDePersona.getSelectedItem().toString();
-       getTipo(TipoPersona);      
+        String TipoPersona = TipoDePersona.getSelectedItem().toString();
+        getTipo(TipoPersona);
     }//GEN-LAST:event_TipoDePersonaActionPerformed
 
     private void ListaXclienteCBMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ListaXclienteCBMouseClicked
@@ -275,37 +284,41 @@ public class Cuentas extends javax.swing.JFrame {
     }//GEN-LAST:event_ListaXclienteCBMouseClicked
 
     private void ListaXclienteCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ListaXclienteCBActionPerformed
-        int cg = ListaXclienteCB.getSelectedIndex();
-        getTipo(TipoDePersona.getSelectedItem().toString());
-        String lista = ListaPersonas.get(cg).getArchivoLista();
+        String Textid = ListaXclienteCB.getSelectedItem().toString().split("_")[0];
+        Integer Isid = Integer.parseInt(Textid);
+        String lista = objetopersona.listaPresios_idpersonas(Isid);
         String[] as = lista.split(" ");
         ListMaterialesCB.removeAllItems();
         for (String a : as) {
             ListMaterialesCB.addItem(a);
         }
-        if (Cuenta.getText()!=("")) {
+        if (Cuenta.getText() != ("")) {
+            Cuenta.setText("");
             for (Pesada pesada : pesadas) {
-               Double valora=pesada.getValor();
+                Double valora = pesada.getValor();
+                String nombrea = pesada.getMaterial();
                 for (String a : as) {
-                    Double valorb=Double.parseDouble(a.split(",")[1]);
-                    
-                    if (valora.equals(valorb)){
-                        
-                    }else{
+                    String[] material = a.split(",");
+                    String nombreb = material[0];
+                    Double valorb = Double.parseDouble(material[1]);
+                    if (valora != valorb && nombrea.equals(nombreb)) {
                         pesada.setValor(valorb);
-                        JOptionPane.showConfirmDialog(null,pesada.getPesada() );
                     }
                 }
+
+                Cuenta.append(pesada.toString() + "\n");
             }
-        }
     }//GEN-LAST:event_ListaXclienteCBActionPerformed
+    }
 
     private void editar_listaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editar_listaActionPerformed
-          int cg = ListaXclienteCB.getSelectedIndex();
-        String lista = ListaPersonas.get(cg).getArchivoLista();
-         ActualizarListaPrecios a = new ActualizarListaPrecios(lista, cg);
+        String TextId = ListaXclienteCB.getSelectedItem().toString().split("_")[0];
+
+        Integer identificacion = Integer.parseInt(TextId);
+        String lista = ListaPersonas.get(ListaXclienteCB.getSelectedIndex()).getArchivoLista();
+        ActualizarListaPrecios a = new ActualizarListaPrecios(lista, identificacion);
         a.setVisible(true);
-        
+
     }//GEN-LAST:event_editar_listaActionPerformed
 
     private void ListMaterialesCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ListMaterialesCBActionPerformed
@@ -314,49 +327,131 @@ public class Cuentas extends javax.swing.JFrame {
 
     private void TextPesadaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TextPesadaActionPerformed
         // TODO add your handling code here:
-       
+
     }//GEN-LAST:event_TextPesadaActionPerformed
 
     private void TextPesadaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_TextPesadaKeyPressed
         // TODO add your handling code here:
-           if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-        Double peso=Double.parseDouble(TextPesada.getText());
-        String[] vv=ListMaterialesCB.getSelectedItem().toString().split(",");
-        String textValor=vv[1];
-        Double valor=Double.parseDouble(textValor);
-        Pesada nuevaPesada=new Pesada(contado, peso, valor);
-        Cuenta.append(nuevaPesada.toString()+"\n");
-        pesadas.add(nuevaPesada);
-        contado=contado+1;
-        TextPesada.setText("");
-        total=total+nuevaPesada.getTotal().intValue();
-        ValorTotalLabel.setText(total.toString());   
-          }
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            Double peso = Double.parseDouble(TextPesada.getText());
+            String[] vv = ListMaterialesCB.getSelectedItem().toString().split(",");
+            String textValor = vv[1];
+            Double valor = Double.parseDouble(textValor);
+            String material = vv[0];
+            Pesada nuevaPesada = new Pesada(contado, material, peso, valor);
+            Cuenta.append(nuevaPesada.toString() + "\n");
+            pesadas.add(nuevaPesada);
+            contado = contado + 1;
+            TextPesada.setText("");
+            total = total + nuevaPesada.getTotal().intValue();
+            ValorTotalLabel.setText(total.toString());
+        }
     }//GEN-LAST:event_TextPesadaKeyPressed
 
     private void CheckCanceladoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckCanceladoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_CheckCanceladoActionPerformed
- int contado =0;
- Integer total=0;
+    int contado = 0;
+    Double total = 0.0;
     private void BAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BAgregarActionPerformed
-      
-        Double peso=Double.parseDouble(TextPesada.getText());
-        String[] vv=ListMaterialesCB.getSelectedItem().toString().split(",");
-        String textValor=vv[1];
-        Double valor=Double.parseDouble(textValor);
-        Pesada nuevaPesada=new Pesada(contado, peso, valor);
-        Cuenta.append(nuevaPesada.toString()+"\n");
+
+        Double peso = Double.parseDouble(TextPesada.getText());
+        String[] vv = ListMaterialesCB.getSelectedItem().toString().split(",");
+        String textValor = vv[1];
+        Double valor = Double.parseDouble(textValor);
+        String material = vv[0];
+        Pesada nuevaPesada = new Pesada(contado, material, peso, valor);
+        Cuenta.append(nuevaPesada.toString() + "\n");
         pesadas.add(nuevaPesada);
-        contado=contado+1;
+        contado = contado + 1;
         TextPesada.setText("");
-        total=total+nuevaPesada.getTotal().intValue();
+        total = total + nuevaPesada.getTotal();
         ValorTotalLabel.setText(total.toString());
+        
     }//GEN-LAST:event_BAgregarActionPerformed
 
     private void BotonTerminarCuentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonTerminarCuentaActionPerformed
+        CCuentas cuenta = new CCuentas();
+        String s = ListaXclienteCB.getSelectedItem().toString();
+        String[] sa = s.split("_");
+        // System.out.println(sa[0]);
+        Integer id = Integer.parseInt(sa[0]);
+        CPrestamos cP = new CPrestamos();
+        Double de = cP.SumPrestamo(id);
+        int abono = 0;
 
+        if (de != 0) {
+            abono = Integer.parseInt(JOptionPane.showInputDialog(null, "Esta persona tine una deuda de: " + de + " ¿desea cruzar con la cuenta ?"));
+            Cuenta.append("abona " + abono + " a la deuda de " + de);
+            total = total - abono;
+            ValorTotalLabel.setText(total.toString());
+            cP.AbonoPrestamos(id, abono, de);
+            //cP.listaPrestamos(TPrestamos);
+        }
+
+        //TextAreaCuentas.append(Cm.toString());
+        Cuenta.append("\n" + "el valor total= " + total.toString());
+        Cuenta nueva = null;
+
+        if (tipo_compra.getSelectedItem().toString().equals("Compra")) {
+            switch (CheckCancelado.getSelectedItem().toString()) {
+                case "Cancelado":
+                    nueva = new Cuenta(1, id, 1, Cuenta.getText(), total);
+                    break;
+                case "Por Cancelar":
+                    nueva = new Cuenta(1, id, 0, Cuenta.getText(), total);
+                    break;
+                default:
+                    throw new AssertionError();
+            }
+        } else {
+            switch (CheckCancelado.getSelectedItem().toString()) {
+                case "Cancelado":
+                    nueva = new Cuenta(2, id, 1, Cuenta.getText(), total);
+                    break;
+                case "Por Cancelar":
+                    nueva = new Cuenta(2, id, 0, Cuenta.getText(), total);
+                    break;
+                default:
+                    throw new AssertionError();
+            }
+
+        }
+
+        JOptionPane.showConfirmDialog(null, "el Valor q se de debe pagar es : " + total);
+        Double num = 0.0;
+        Integer idcuenta = cuenta.registrarCuenta(nueva, num);
+
+        try {
+            pdf(idcuenta);
+        } catch (SQLException ex) {
+            Logger.getLogger(Cuentas.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Cuentas.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (DocumentException ex) {
+            Logger.getLogger(Cuentas.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        this.dispose();
     }//GEN-LAST:event_BotonTerminarCuentaActionPerformed
+
+    public void pdf(Integer idfac) throws SQLException, IOException, DocumentException {
+        String fac = (String) ListaXclienteCB.getSelectedItem();
+        String[] fac2 = fac.split("_");
+        Integer numeroidpersona = Integer.parseInt(fac2[0]);
+        objetopersona = new CPersona();
+        persona pepe = objetopersona.Leerpersonas(numeroidpersona);
+        String nombreArchivo = "factura de " + pepe.getNombre() + ".pdf";
+        String cliente = pepe.getNombre();
+        String direccion = pepe.getDescripcion();
+        LocalDate fechaActual = LocalDate.now();
+        DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd 'de' MMMM 'de' yyyy", new Locale("es", "ES"));
+        String fecha = fechaActual.format(formatoFecha);
+        double importe = Double.parseDouble(total.toString());
+        Double kilos = 4.0;
+        FacturaPdf facturaPdf = new FacturaPdf();
+        facturaPdf.generarFacturaPdf(nombreArchivo, tipo_compra.getSelectedItem().toString(), idfac, cliente, direccion, fecha, pesadas, importe, kilos);
+    }
+
 
     private void tipo_compraMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tipo_compraMouseClicked
         // TODO add your handling code here:

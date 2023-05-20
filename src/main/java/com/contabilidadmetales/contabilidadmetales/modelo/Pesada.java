@@ -10,26 +10,31 @@ package com.contabilidadmetales.contabilidadmetales.modelo;
  */
 public class Pesada {
    private Integer id;
-
+   private String Material;
    private Double pesada,valor,total;
-   
-   public void totalpesada(){
-       this.total=this.pesada*this.valor;
-       totalpesada();
-   }
-
-    public Pesada(Integer id, Double pesada, Double valor) {
-        this.id = id;
-        this.pesada = pesada;
-        this.valor = valor;
-        this.total= this.pesada*this.valor;
-    }
 
     @Override
     public String toString() {
-        return  "id=" + id + ", " + pesada + ".kg X " + valor + " = " + total ;
+        return "id=" + id + ",  " + Material + "  " + pesada + " X " + valor + " = " + total ;
+    }
+   
+    public Pesada(Integer id, String Material, Double pesada, Double valor) {
+        this.id = id;
+        this.Material = Material;
+        this.pesada = pesada;
+        this.valor = valor;
+        this.total=this.pesada*this.valor;
     }
 
+    public String getMaterial() {
+        return Material;
+        
+    }
+
+    public void setMaterial(String Material) {
+        this.Material = Material;
+    }
+  
     public Integer getId() {
         return id;
     }
@@ -46,6 +51,14 @@ public class Pesada {
         this.pesada = pesada;
     }
 
+    public Double getTotal() {
+        return total;
+    }
+
+    public void setTotal(Double total) {
+        this.total = total;
+    }
+
     public Double getValor() {
         return valor;
     }
@@ -55,12 +68,6 @@ public class Pesada {
         this.total=pesada*valor;
     }
 
-    public Double getTotal() {
-        return total;
-    }
-
-    public void setTotal(Double total) {
-        this.total = total;
-    }
+  
    
 }

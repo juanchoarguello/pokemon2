@@ -6,6 +6,7 @@ package com.contabilidadmetales.contabilidadmetales.controlador;
 
 import com.contabilidadmetales.contabilidadmetales.CConexion;
 import com.contabilidadmetales.contabilidadmetales.modelo.Cuenta;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -35,18 +36,17 @@ public class CCuentas {
             ps.setInt(5, cuenta.getId_Persona());
             ps.setDouble(6, abono);
             ps.executeUpdate();
-
             ResultSet generatedKeys = ps.getGeneratedKeys();
             if (generatedKeys.next()) {
                 int idCuenta = generatedKeys.getInt(1);
-                 JOptionPane.showConfirmDialog(null,"La cuenta se ha registrado con éxito. ID de la cuenta: " + idCuenta);
+                JOptionPane.showConfirmDialog(null, "La cuenta se ha registrado con éxito. ID de la cuenta: " + idCuenta);
                 return idCuenta;
             } else {
-                JOptionPane.showConfirmDialog(null,"No se ha podido obtener el ID de la cuenta registrada.");
+                JOptionPane.showConfirmDialog(null, "No se ha podido obtener el ID de la cuenta registrada.");
                 return 0;
             }
         } catch (Exception e) {
-             JOptionPane.showConfirmDialog(null,"Error al insertar la cuenta " + e);
+            JOptionPane.showConfirmDialog(null, "Error al insertar la cuenta " + e);
             return 0;
         }
     }
@@ -55,7 +55,7 @@ public class CCuentas {
         try {
             Statement ps = null;
             CConexion objetoConexion = new CConexion();
-            String sql = "SELECT * FROM metalesdb.cuentas where idcuentas=" + id + ";";
+            String sql = "SELECT * FROM cuentas where idcuentas=" + id + ";";
             ps = objetoConexion.estableceConexion().createStatement();
             ResultSet rs = ps.executeQuery(sql);
             Cuenta PR = new Cuenta();
@@ -80,7 +80,7 @@ public class CCuentas {
         try {
             Statement ps = null;
             CConexion objetoConexion = new CConexion();
-            String sql = "SELECT * FROM metalesdb.cuentas ;";
+            String sql = "SELECT * FROM cuentas ;";
             ps = objetoConexion.estableceConexion().createStatement();
             ResultSet rs = ps.executeQuery(sql);
             ArrayList<Cuenta> listaCuenta = new ArrayList<>();
@@ -105,11 +105,46 @@ public class CCuentas {
 
     }
 
-    public void listaCuentasxc(int id, JTable t, int idTipoCuenta) {
+    public void lista_de_Cuentas_x_cobrar(int id, JTable t, int Estado) {
         try {
             Statement ps = null;
             CConexion objetoConexion = new CConexion();
-            String sql = "SELECT * FROM metalesdb.cuentas where Id_Persona=" + id + " and Estado=0 and Id_TipoCuenta=" + idTipoCuenta + ";";
+            String sql = "SELECT * FROM cuentas where Id_Persona=" + id + " and Estado=0 and Estado=" + Estado + ";";
+            ps = objetoConexion.estableceConexion().createStatement();
+            ResultSet rs = ps.executeQuery(sql);
+            while (rs.next()) {
+                String[] pro = new String[5];
+                pro[0] = rs.getString(1);
+                pro[1] = rs.getString(2);
+                pro[2] = rs.getString(3);
+                pro[3] = rs.getString(5);
+                 switch (rs.getInt(6)) {
+                    case 1:
+                        pro[4] = "compra";
+                        break;
+                    case 2:
+                        pro[4] = "venta";
+                        break;
+                    default:
+                        throw new AssertionError();
+                }
+                DefaultTableModel model = (DefaultTableModel) t.getModel();
+                JButton BCancelado = new JButton("Cancelado");
+                model.addRow(pro);
+            }
+            //return listaCuenta;
+        } catch (Exception e) {
+            System.out.println("Error al insertar el USUARIO " + e);
+        }
+        // return null;
+
+    }
+
+    public void lista_de_Cuentas_x_persona(int id, JTable t, int idTipoCuenta) {
+        try {
+            Statement ps = null;
+            CConexion objetoConexion = new CConexion();
+            String sql = "SELECT * FROM cuentas where Id_Persona=" + id + " and Id_TipoCuenta=" + idTipoCuenta + ";";
             ps = objetoConexion.estableceConexion().createStatement();
             ResultSet rs = ps.executeQuery(sql);
             while (rs.next()) {
@@ -119,7 +154,17 @@ public class CCuentas {
                 pro[1] = rs.getString(2);
                 pro[2] = rs.getString(3);
                 pro[3] = rs.getString(5);
-                pro[4] = rs.getString(8);
+                switch (rs.getInt(6)) {
+                    case 1:
+                        pro[4] = "compra";
+                        break;
+                    case 2:
+                        pro[4] = "venta";
+                        break;
+                    default:
+                        throw new AssertionError();
+                }
+
                 DefaultTableModel model = (DefaultTableModel) t.getModel();
                 JButton BCancelado = new JButton("Cancelado");
                 model.addRow(pro);
@@ -133,20 +178,42 @@ public class CCuentas {
     }
 
     public Double SumCuentasxd(int id) {
+        Double cc = SumCuentas_x_cobrar_Compras(id) + SumCuentas_x_cobrar_Ventas(id);
+        return cc;
+    }
+
+    public Double SumCuentas_x_cobrar_Ventas(int id) {
         try {
-            Statement ps = null;
             CConexion objetoConexion = new CConexion();
-            String sql = "SELECT SUM(Valor) FROM metalesdb.cuentas where Id_Persona=" + id + " and Estado=0 ;";
-            ps = objetoConexion.estableceConexion().createStatement();
-            ResultSet rs = ps.executeQuery(sql);
+            Connection conexion = objetoConexion.estableceConexion();
+            String sql = "SELECT SUM(Valor) FROM cuentas WHERE Id_Persona = ? AND Estado = 0 AND Id_TipoCuenta = 2;";
+            PreparedStatement ps = conexion.prepareStatement(sql);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
             rs.next();
-            Double Deuda = rs.getDouble(1);
-            return Deuda;
+            Double deuda = -rs.getDouble(1);
+            return deuda;
         } catch (Exception e) {
-            System.out.println("Error al insertar el USUARIO " + e);
+            System.out.println("Error al consultar la suma de las cuentas por cobrar de las Ventas: " + e);
             return null;
         }
+    }
 
+    public Double SumCuentas_x_cobrar_Compras(int id) {
+        try {
+            CConexion objetoConexion = new CConexion();
+            Connection conexion = objetoConexion.estableceConexion();
+            String sql = "SELECT SUM(Valor) FROM cuentas WHERE Id_Persona = ? AND Estado = 0 AND Id_TipoCuenta = 1;";
+            PreparedStatement ps = conexion.prepareStatement(sql);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            Double deuda = rs.getDouble(1);
+            return deuda;
+        } catch (Exception e) {
+            System.out.println("Error al consultar la suma de las cuentas por cobrar de las compras: " + e);
+            return null;
+        }
     }
 
     public Boolean modificarCuentaEstado(int id) {
