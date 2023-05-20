@@ -22,7 +22,7 @@ import javax.swing.table.DefaultTableModel;
  */
 public class CPrestamos {
 
-    //SELECT idpersonas FROM metalesdb.personas where nombre="asd"
+    //SELECT idpersonas FROM personas where nombre="asd"
     int Id_Tipo_Persona;
 
     public int Leer_id_X_por_nombre(String Nombre) {
@@ -64,7 +64,7 @@ public class CPrestamos {
         try {
             Statement ps = null;
             CConexion objetoConexion = new CConexion();
-            String sql = "SELECT SUM(Valor) FROM metalesdb.prestamos where Id_Persona=" + Id_Persona + ";";
+            String sql = "SELECT SUM(Valor) FROM prestamos where Id_Persona=" + Id_Persona + ";";
             ps = objetoConexion.estableceConexion().createStatement();
             ResultSet rs = ps.executeQuery(sql);
             rs.next();
@@ -81,7 +81,7 @@ public class CPrestamos {
         try {
             Statement ps = null;
             CConexion objetoConexion = new CConexion();
-            String sql = "SELECT * FROM metalesdb.prestamos where Id_Persona=" + idPrestamos + ";";
+            String sql = "SELECT * FROM prestamos where Id_Persona=" + idPrestamos + ";";
             ps = objetoConexion.estableceConexion().createStatement();
             ResultSet rs = ps.executeQuery(sql);
             Prestamos PR;
@@ -135,13 +135,13 @@ public class CPrestamos {
         } catch (Exception e) {
         }
     }
-    // DELETE FROM `metalesdb`.`prestamos` WHERE (`idPrestamos` = '14');
+    // DELETE FROM ``prestamos` WHERE (`idPrestamos` = '14');
 
     public void RemoverPrestamos(int id) {
         try {
             CConexion objetoConexion = new CConexion();
             PreparedStatement stmt;
-            stmt = objetoConexion.estableceConexion().prepareStatement("DELETE FROM metalesdb.prestamos WHERE idPrestamos =" + id);
+            stmt = objetoConexion.estableceConexion().prepareStatement("DELETE FROM prestamos WHERE idPrestamos =" + id);
             stmt.executeUpdate();
         } catch (SQLException ex) {
             JOptionPane.showInputDialog(null, "No se han podido actualizar los datos" + ex);
@@ -152,7 +152,7 @@ public class CPrestamos {
         try {
             CConexion objetoConexion = new CConexion();
             PreparedStatement stmt;
-            stmt = objetoConexion.estableceConexion().prepareStatement("UPDATE metalesdb.prestamos SET Valor=" + Valor + ",descripcion='" + descripcion + "' WHERE idPrestamos=" + id + ";");
+            stmt = objetoConexion.estableceConexion().prepareStatement("UPDATE prestamos SET Valor=" + Valor + ",descripcion='" + descripcion + "' WHERE idPrestamos=" + id + ";");
             stmt.executeUpdate();
         } catch (SQLException ex) {
             JOptionPane.showInputDialog(null, "No se han podido actualizar los datos" + ex);
@@ -163,7 +163,7 @@ public class CPrestamos {
         try {
             Statement ps = null;
             CConexion objetoConexion = new CConexion();
-            String sql = "SELECT * FROM metalesdb.prestamos;";
+            String sql = "SELECT * FROM prestamos;";
             ps = objetoConexion.estableceConexion().createStatement();
             ResultSet rs = ps.executeQuery(sql);
             persona PR;

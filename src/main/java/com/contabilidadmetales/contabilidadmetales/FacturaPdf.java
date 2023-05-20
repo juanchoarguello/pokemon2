@@ -2,6 +2,9 @@ package com.contabilidadmetales.contabilidadmetales;
 
 import com.contabilidadmetales.contabilidadmetales.controlador.CInventario;
 import com.contabilidadmetales.contabilidadmetales.controlador.Materiales;
+import com.contabilidadmetales.contabilidadmetales.modelo.Pesada;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -14,16 +17,14 @@ import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfWriter;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class FacturaPdf {
+    
 
-    public void generarFacturaPdf(String nombreArchivo,String Tipo,Integer idfactura, String cliente, String direccion,
-            String fecha, HashMap<String, HashMap<String, Double>> conceptos, double total, Double kilos) throws IOException, DocumentException, SQLException {
-
+    public void generarFacturaPdf(String nombreArchivo, String Tipo, Integer idfactura, String cliente, String direccion,
+            String fecha, ArrayList<Pesada> pesadas, double total, Double kilos) throws IOException, DocumentException, SQLException {
         // Crear documento PDF
+        FacturaPdf facturaPdf = new FacturaPdf();
         Document document = new Document(PageSize.A4.rotate());
         PdfWriter.getInstance(document, new FileOutputStream(nombreArchivo));
         document.open();
@@ -42,7 +43,7 @@ public class FacturaPdf {
 
         // Agregar encabezado
         Paragraph encabezado = new Paragraph();
-        encabezado.add(new Phrase("METALES DE SANTANDER  \n \n" + "Nit : 900405928\n" + "\n FACTURA "+Tipo+"# " + idfactura + "", tituloFont));
+        encabezado.add(new Phrase("METALES DE SANTANDER  \n \n" + "Nit : 900405928\n" + "\n FACTURA " + Tipo + "# " + idfactura + "", tituloFont));
         encabezado.setAlignment(Element.ALIGN_CENTER);
         encabezado.setSpacingAfter(10f);
         document.add(encabezado);
@@ -58,7 +59,7 @@ public class FacturaPdf {
         document.add(datosCliente);
 
         // Agregar tabla de conceptos e importes
-        float[] columnWidths = {3f, 1f, 1f};
+        float[] columnWidths = {3f, 1f, 1f, 1f};
         com.itextpdf.text.pdf.PdfPTable table = new com.itextpdf.text.pdf.PdfPTable(columnWidths);
         table.setWidthPercentage(100);
         table.setSpacingBefore(10f);
@@ -77,23 +78,40 @@ public class FacturaPdf {
         cell.setPadding(5f);
         table.addCell(cell);
 
-        cell = new com.itextpdf.text.pdf.PdfPCell(new Phrase("Importe", encabezadoTablaFont));
+        cell = new com.itextpdf.text.pdf.PdfPCell(new Phrase("Precio", encabezadoTablaFont));
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
         cell.setPadding(5f);
         table.addCell(cell);
 
+        cell = new com.itextpdf.text.pdf.PdfPCell(new Phrase("Costo", encabezadoTablaFont));
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setPadding(5f);
+        table.addCell(cell);
+        CInventario inventario = new CInventario();
         // Datos de tabla
-        for (Map.Entry<String, HashMap<String, Double>> entry : conceptos.entrySet()) {
-            CInventario inventario = new CInventario();
+        for (Pesada pesada : pesadas) {
+
             Materiales materiales = new Materiales();
-            String material = entry.getKey();
-            double cantidad = entry.getValue().get("cantidad");
-            double costo = entry.getValue().get("costo");
+            String material = pesada.getMaterial();
+            Double cantidad = pesada.getPesada();
+            System.out.println(cantidad);
+            Double costo = pesada.getValor();
+            Double total1 = pesada.getTotal();
             int idMaterial = materiales.obtenerIdMaterialPorNombre(material);
 
-            // Agregar el material al inventario en MySQL
-            inventario.agregarMaterial(cantidad, idfactura.toString(), idMaterial, costo);
+            // Agregar el material al inventario en MySQL dependiendo del tipo de factura
+            switch (Tipo) {
+                case "Compra":
+                    inventario.agregarMaterial(-cantidad, idfactura.toString(), idMaterial, total1);
+                    break;
+                case "Venta":
+                    inventario.agregarMaterial(cantidad, idfactura.toString(), idMaterial, -total1);
+                    break;
+                default:
+                    throw new AssertionError();
+            }
 
             cell = new com.itextpdf.text.pdf.PdfPCell(new Phrase(material, datosTablaFont));
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -101,7 +119,7 @@ public class FacturaPdf {
             cell.setPadding(5f);
             table.addCell(cell);
 
-            cell = new com.itextpdf.text.pdf.PdfPCell(new Phrase(String.format("%.0f", cantidad), datosTablaFont));
+            cell = new com.itextpdf.text.pdf.PdfPCell(new Phrase(String.format("%.2f", cantidad), datosTablaFont));
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setPadding(5f);
@@ -112,9 +130,14 @@ public class FacturaPdf {
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setPadding(5f);
             table.addCell(cell);
+
+            cell = new com.itextpdf.text.pdf.PdfPCell(new Phrase("$" + String.format("%.0f", total1), datosTablaFont));
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setPadding(5f);
+            table.addCell(cell);
         }
 
-        
         document.add(table);
 
         // Agregar total

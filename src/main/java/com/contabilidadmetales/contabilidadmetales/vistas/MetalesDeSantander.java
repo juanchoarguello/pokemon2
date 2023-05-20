@@ -5,37 +5,39 @@
 package com.contabilidadmetales.contabilidadmetales.vistas;
 
 import com.contabilidadmetales.contabilidadmetales.FacturaPdf;
+import com.contabilidadmetales.contabilidadmetales.InventarioReportGenerator;
 import com.contabilidadmetales.contabilidadmetales.controlador.CCuentas;
 import com.contabilidadmetales.contabilidadmetales.controlador.CInventario;
 import com.contabilidadmetales.contabilidadmetales.controlador.CPersona;
 import com.contabilidadmetales.contabilidadmetales.controlador.CPrestamos;
 import com.contabilidadmetales.contabilidadmetales.modelo.Cuenta;
 import com.contabilidadmetales.contabilidadmetales.modelo.persona;
-import com.itextpdf.text.DocumentException;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.io.IOException;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
-import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
 import com.contabilidadmetales.contabilidadmetales.controlador.Materiales;
+import com.contabilidadmetales.contabilidadmetales.controlador.TipoMovimientoController;
 import com.contabilidadmetales.contabilidadmetales.modelo.Inventario;
 import com.contabilidadmetales.contabilidadmetales.modelo.Material;
-import java.awt.event.KeyEvent;
+import com.contabilidadmetales.contabilidadmetales.modelo.Pesada;
+import com.contabilidadmetales.contabilidadmetales.modelo.TipoMovimiento;
+import com.itextpdf.text.DocumentException;
+import java.io.IOException;
 import java.sql.SQLException;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
-import javax.swing.JTable;
 
 /**
  *
@@ -46,9 +48,6 @@ public class MetalesDeSantander extends javax.swing.JFrame {
     /**
      * Creates new form MetalesDeSantander
      */
-    public void leerClientes() {
-        TextAreaCuentas.append((String) ListaClientesCuentaCB.getSelectedItem() + "\n" + "\n");
-    }
     CPersona conp;
     CPrestamos prestamos;
 
@@ -76,7 +75,6 @@ public class MetalesDeSantander extends javax.swing.JFrame {
         initComponents();
         prestamos = new CPrestamos();
         prestamos.listaPrestamos(TPrestamos);
-        leerClientes();
         optenerListaProbedor(selec());
         Toolkit t = Toolkit.getDefaultToolkit();
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -158,13 +156,14 @@ public class MetalesDeSantander extends javax.swing.JFrame {
             modeloTabla.addRow(fila);
         }
     }
- public void llenarTabla2( LocalDate fechaSuperior,  LocalDate fechainferior,int idMaterial) throws SQLException {
+
+    public void llenarTabla2(LocalDate fechaSuperior, LocalDate fechainferior, int idMaterial) throws SQLException {
         inve = new CInventario();
         cc = new Materiales();
-          String [] va={"idInventario", "peso", "Descripcion", "idMaterial", "Valor", "fecha"};
-        TInventario.setModel(new DefaultTableModel(va,0));
-        ArrayList<Inventario> materiales = inve.obtenerMaterialesPorFechasXidMaterial(TInventario,fechainferior, fechaSuperior,idMaterial);
-       /* DefaultTableModel modeloTabl=(DefaultTableModel)TInventario.getModel();
+        String[] va=  {"idInventario", "peso", "Descripcion", "idMaterial", "Valor", "fecha"};
+        TInventario.setModel(new DefaultTableModel(va,0 ));
+        ArrayList<Inventario> materiales = inve.obtenerMaterialesPorFechasXidMaterial(TInventario, fechainferior, fechaSuperior, idMaterial);
+        /* DefaultTableModel modeloTabl=(DefaultTableModel)TInventario.getModel();
         for (Inventario material : materiales) {
             String mate = cc.obtenerNombreMaterial(material.getIdMaterial());
             Object[] fila = {material.getId(), material.getPeso(), material.getDescripcion(), mate, material.getValor(), material.getFecha()};
@@ -172,6 +171,7 @@ public class MetalesDeSantander extends javax.swing.JFrame {
         }
         TInventario.setModel(modeloTabl);*/
     }
+
     public void MetodoComboboxInventario(JComboBox Combobox2) {
         cc = new Materiales();
         List<Material> materiales = cc.listarMateriales();
@@ -204,31 +204,23 @@ public class MetalesDeSantander extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel2 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
-        TextPesada = new javax.swing.JTextField();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        TextAreaCuentas = new javax.swing.JTextArea();
-        ListMaterialesCB = new javax.swing.JComboBox<>();
-        jLabel3 = new javax.swing.JLabel();
-        BAgregar = new javax.swing.JButton();
         ListaClientesCuentaCB = new javax.swing.JComboBox<>();
-        jLabel4 = new javax.swing.JLabel();
-        ValorTotalLabel = new javax.swing.JLabel();
-        BotonTerminarCuenta = new javax.swing.JButton();
         jScrollPane12 = new javax.swing.JScrollPane();
         TCuentaXC = new javax.swing.JTable();
         jLabel7 = new javax.swing.JLabel();
-        CheckCancelado = new javax.swing.JComboBox<>();
         DeudaLabel = new javax.swing.JLabel();
         TipoDePersonaComboBox = new javax.swing.JComboBox<>();
         CancelarCuenta = new javax.swing.JButton();
         BotonabonarCC = new javax.swing.JButton();
-        tipoCb = new javax.swing.JComboBox<>();
         jButton8 = new javax.swing.JButton();
+        jScrollPane13 = new javax.swing.JScrollPane();
+        TCuentaXC1 = new javax.swing.JTable();
+        BotonabonarCC1 = new javax.swing.JButton();
+        tipo_Cuenta = new javax.swing.JComboBox<>();
+        BotonabonarCC2 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel13 = new javax.swing.JLabel();
         ListMaterialesCB2 = new javax.swing.JComboBox<>();
@@ -262,19 +254,15 @@ public class MetalesDeSantander extends javax.swing.JFrame {
         jTextField1 = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        ValorI = new javax.swing.JTextField();
+        Valor1 = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
-        jScrollPane5 = new javax.swing.JScrollPane();
-        jTextArea3 = new javax.swing.JTextArea();
-        jToggleButton1 = new javax.swing.JToggleButton();
-        jToggleButton2 = new javax.swing.JToggleButton();
         jButton6 = new javax.swing.JButton();
         Tipo = new javax.swing.JComboBox<>();
-        jPanel8 = new javax.swing.JPanel();
-        jScrollPane7 = new javax.swing.JScrollPane();
-        TClientes1 = new javax.swing.JTable();
-        BAgregarClientes1 = new javax.swing.JButton();
-        EditarCliente1 = new javax.swing.JButton();
+        TipoMovimiento = new javax.swing.JComboBox<>();
+        jButton9 = new javax.swing.JButton();
+        EliminarTipoMovimiento = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
         jPanel4 = new javax.swing.JPanel();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
@@ -305,13 +293,12 @@ public class MetalesDeSantander extends javax.swing.JFrame {
         ListAños1 = new javax.swing.JComboBox<>();
         jLabel35 = new javax.swing.JLabel();
         jLabel30 = new javax.swing.JLabel();
+        jPanel7 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        jLabel1.setFont(new java.awt.Font("Arial", 3, 36)); // NOI18N
-        jLabel1.setText("Metales de santander");
 
         jTabbedPane1.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
         jTabbedPane1.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -320,51 +307,8 @@ public class MetalesDeSantander extends javax.swing.JFrame {
             }
         });
 
-        jButton1.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        jButton1.setText("Edit Lista");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
         jLabel2.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
         jLabel2.setText("Persona");
-
-        TextPesada.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        TextPesada.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                TextPesadaActionPerformed(evt);
-            }
-        });
-        TextPesada.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                TextPesadaKeyPressed(evt);
-            }
-        });
-
-        TextAreaCuentas.setColumns(20);
-        TextAreaCuentas.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        TextAreaCuentas.setRows(5);
-        jScrollPane1.setViewportView(TextAreaCuentas);
-
-        ListMaterialesCB.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        ListMaterialesCB.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ListMaterialesCBActionPerformed(evt);
-            }
-        });
-
-        jLabel3.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        jLabel3.setText("Material ");
-
-        BAgregar.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        BAgregar.setText("Agregar a la cuenta");
-        BAgregar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BAgregarActionPerformed(evt);
-            }
-        });
 
         ListaClientesCuentaCB.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
         ListaClientesCuentaCB.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -375,22 +319,6 @@ public class MetalesDeSantander extends javax.swing.JFrame {
         ListaClientesCuentaCB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ListaClientesCuentaCBActionPerformed(evt);
-            }
-        });
-
-        jLabel4.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        jLabel4.setText("TOTAL");
-
-        ValorTotalLabel.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        ValorTotalLabel.setForeground(new java.awt.Color(255, 0, 0));
-        ValorTotalLabel.setText("0.0");
-
-        BotonTerminarCuenta.setBackground(new java.awt.Color(255, 51, 51));
-        BotonTerminarCuenta.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        BotonTerminarCuenta.setText("Terminar Cuenta");
-        BotonTerminarCuenta.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BotonTerminarCuentaActionPerformed(evt);
             }
         });
 
@@ -407,14 +335,6 @@ public class MetalesDeSantander extends javax.swing.JFrame {
 
         jLabel7.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
         jLabel7.setText("CUENTAS POR COBRAR");
-
-        CheckCancelado.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        CheckCancelado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Cancelado", "Por Cancelar" }));
-        CheckCancelado.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                CheckCanceladoActionPerformed(evt);
-            }
-        });
 
         DeudaLabel.setFont(new java.awt.Font("Arial Narrow", 3, 48)); // NOI18N
         DeudaLabel.setForeground(new java.awt.Color(255, 255, 255));
@@ -444,19 +364,51 @@ public class MetalesDeSantander extends javax.swing.JFrame {
             }
         });
 
-        tipoCb.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        tipoCb.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Compra", "Venta" }));
-        tipoCb.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tipoCbActionPerformed(evt);
-            }
-        });
-
         jButton8.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        jButton8.setText("Edit Lista");
+        jButton8.setText("Nueva Cuenta");
         jButton8.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton8ActionPerformed(evt);
+            }
+        });
+
+        TCuentaXC1.setFont(new java.awt.Font("Arial", 3, 14)); // NOI18N
+        TCuentaXC1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "idcuentas", "fecha", "Valor", "Cuenta"
+            }
+        ));
+        jScrollPane13.setViewportView(TCuentaXC1);
+
+        BotonabonarCC1.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
+        BotonabonarCC1.setText("generar factura");
+        BotonabonarCC1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BotonabonarCC1ActionPerformed(evt);
+            }
+        });
+
+        tipo_Cuenta.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
+        tipo_Cuenta.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Compra", "Venta" }));
+        tipo_Cuenta.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tipo_CuentaMouseClicked(evt);
+            }
+        });
+        tipo_Cuenta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tipo_CuentaActionPerformed(evt);
+            }
+        });
+
+        BotonabonarCC2.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
+        BotonabonarCC2.setText("factura");
+        BotonabonarCC2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BotonabonarCC2ActionPerformed(evt);
             }
         });
 
@@ -465,100 +417,68 @@ public class MetalesDeSantander extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(tipoCb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(TipoDePersonaComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(ListaClientesCuentaCB, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton1))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(ListMaterialesCB, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(TextPesada, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(BAgregar)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel7)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(DeudaLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(170, 170, 170)
-                                .addComponent(BotonabonarCC)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(CancelarCuenta)))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(tipo_Cuenta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(TipoDePersonaComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(ListaClientesCuentaCB, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton8)
+                        .addGap(101, 101, 101)
+                        .addComponent(jLabel7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(DeudaLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 39, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane13, javax.swing.GroupLayout.PREFERRED_SIZE, 728, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(BotonabonarCC1))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane12)
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(BotonabonarCC)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(ValorTotalLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(CheckCancelado, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(CancelarCuenta)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(BotonTerminarCuenta, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 761, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                        .addComponent(jButton8)
-                                        .addGap(177, 177, 177)))
-                                .addComponent(jScrollPane12, javax.swing.GroupLayout.PREFERRED_SIZE, 591, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap(16, Short.MAX_VALUE))))
+                                .addComponent(BotonabonarCC2)
+                                .addGap(0, 0, Short.MAX_VALUE)))))
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                            .addGap(7, 7, 7)
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(TipoDePersonaComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(tipo_Cuenta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(ListaClientesCuentaCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton8)
+                            .addComponent(jLabel7)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(DeudaLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                        .addComponent(DeudaLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane12, javax.swing.GroupLayout.DEFAULT_SIZE, 465, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(BotonabonarCC)
-                    .addComponent(CancelarCuenta))
-                .addGap(844, 844, 844))
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(tipoCb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(TipoDePersonaComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
-                    .addComponent(ListaClientesCuentaCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
-                .addGap(31, 31, 31)
-                .addComponent(jButton8)
-                .addGap(35, 35, 35)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 334, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(ListMaterialesCB, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(TextPesada)
-                    .addComponent(BAgregar))
-                .addGap(10, 10, 10)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(BotonTerminarCuenta, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(ValorTotalLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(CheckCancelado, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane13, javax.swing.GroupLayout.PREFERRED_SIZE, 486, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane12, javax.swing.GroupLayout.PREFERRED_SIZE, 486, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, 0)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(BotonabonarCC)
+                        .addComponent(CancelarCuenta)
+                        .addComponent(BotonabonarCC2))
+                    .addComponent(BotonabonarCC1))
+                .addContainerGap(1719, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Cuenta", jPanel2);
@@ -697,7 +617,7 @@ public class MetalesDeSantander extends javax.swing.JFrame {
                             .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jScrollPane10, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jScrollPane9, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(858, Short.MAX_VALUE))
+                .addContainerGap(1749, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Ingresos / Egresos", jPanel3);
@@ -780,36 +700,34 @@ public class MetalesDeSantander extends javax.swing.JFrame {
                     .addComponent(EditarCliente2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 480, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(869, Short.MAX_VALUE))
+                .addContainerGap(1760, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Personas", jPanel6);
 
         jLabel5.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        jLabel5.setText("Descripcion del gasto ");
+        jLabel5.setText("Descripcion ");
 
         jLabel6.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
         jLabel6.setText("Valor");
 
-        ValorI.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        ValorI.setText("0.0 $");
+        Valor1.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
+        Valor1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Valor1ActionPerformed(evt);
+            }
+        });
+        Valor1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                Valor1KeyPressed(evt);
+            }
+        });
 
         jLabel9.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        jLabel9.setText("Caja Capital");
-
-        jTextArea3.setColumns(20);
-        jTextArea3.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        jTextArea3.setRows(5);
-        jScrollPane5.setViewportView(jTextArea3);
-
-        jToggleButton1.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        jToggleButton1.setText("INGRESO DEL DIA ");
-
-        jToggleButton2.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        jToggleButton2.setText("EGRESO DEL DIA");
+        jLabel9.setText("Movimientos");
 
         jButton6.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        jButton6.setText("Agregar PYG");
+        jButton6.setText("Agregar Tipo Gasto");
         jButton6.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton6ActionPerformed(evt);
@@ -817,137 +735,100 @@ public class MetalesDeSantander extends javax.swing.JFrame {
         });
 
         Tipo.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        Tipo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Gasto", "IIngreso" }));
+        Tipo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Egresos", "Ingreso" }));
+        Tipo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TipoActionPerformed(evt);
+            }
+        });
+
+        TipoMovimiento.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
+
+        jButton9.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
+        jButton9.setText("Agregar PYG");
+        jButton9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton9ActionPerformed(evt);
+            }
+        });
+
+        EliminarTipoMovimiento.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
+        EliminarTipoMovimiento.setText("Eliminar Tipo Gasto");
+        EliminarTipoMovimiento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                EliminarTipoMovimientoActionPerformed(evt);
+            }
+        });
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(jTable1);
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1327, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 53, Short.MAX_VALUE))
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGap(12, 12, 12)
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(jPanel5Layout.createSequentialGroup()
-                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel5Layout.createSequentialGroup()
-                                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(259, 259, 259)
-                                        .addComponent(jLabel5))
-                                    .addGroup(jPanel5Layout.createSequentialGroup()
-                                        .addComponent(ValorI, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(Tipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 327, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(jButton6)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jToggleButton2)
-                                    .addComponent(jToggleButton1)))
-                            .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 1211, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(556, 556, 556)
+                        .addComponent(jLabel9))
                     .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGap(615, 615, 615)
-                        .addComponent(jLabel9)))
-                .addContainerGap(157, Short.MAX_VALUE))
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(EliminarTipoMovimiento)
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addComponent(jButton6)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(Tipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(TipoMovimiento, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Valor1, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGap(9, 9, 9)
-                        .addComponent(jLabel5)
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel5Layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(ValorI, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(Tipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(27, 27, 27)
-                                .addComponent(jLabel9))
-                            .addGroup(jPanel5Layout.createSequentialGroup()
-                                .addGap(10, 10, 10)
-                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel6)
-                        .addGap(9, 9, 9)
-                        .addComponent(jToggleButton2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jToggleButton1)))
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton6)
+                    .addComponent(Tipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(TipoMovimiento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6)
+                    .addComponent(Valor1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(12, 12, 12)
+                .addComponent(EliminarTipoMovimiento)
+                .addGap(31, 31, 31)
+                .addComponent(jLabel9)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 452, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(443, 443, 443))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(1709, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Caja menor", jPanel5);
-
-        TClientes1.setFont(new java.awt.Font("Arial", 3, 18)); // NOI18N
-        TClientes1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
-            },
-            new String [] {
-                "idcliente", "nombre", "Cedula", "identificacion", "TipoDocumento_nombre"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, true, true, true, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        jScrollPane7.setViewportView(TClientes1);
-
-        BAgregarClientes1.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        BAgregarClientes1.setText("Agregar Clientes");
-
-        EditarCliente1.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        EditarCliente1.setText("Editar Clientes");
-
-        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
-        jPanel8.setLayout(jPanel8Layout);
-        jPanel8Layout.setHorizontalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel8Layout.createSequentialGroup()
-                .addGap(35, 35, 35)
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 917, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addComponent(BAgregarClientes1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(EditarCliente1)))
-                .addContainerGap(428, Short.MAX_VALUE))
-        );
-        jPanel8Layout.setVerticalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel8Layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(BAgregarClientes1)
-                    .addComponent(EditarCliente1))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 480, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(843, Short.MAX_VALUE))
-        );
-
-        jTabbedPane1.addTab("Facturacion", jPanel8);
 
         jButton2.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
         jButton2.setText("Registrar prestamo");
@@ -1010,7 +891,7 @@ public class MetalesDeSantander extends javax.swing.JFrame {
                     .addComponent(jButton4))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 612, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(721, Short.MAX_VALUE))
+                .addContainerGap(1612, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Prestamos", jPanel4);
@@ -1143,9 +1024,11 @@ public class MetalesDeSantander extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jLabel27)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(JTValor, javax.swing.GroupLayout.PREFERRED_SIZE, 257, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(JTValor, javax.swing.GroupLayout.PREFERRED_SIZE, 257, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton7))
                             .addGroup(jPanel9Layout.createSequentialGroup()
-                                .addComponent(ListMaterialesInve, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(ListMaterialesInve, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jLabel30)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1173,10 +1056,8 @@ public class MetalesDeSantander extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jLabel34)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(ListAños1, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 79, Short.MAX_VALUE)))
+                                .addComponent(ListAños1, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 244, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel9Layout.setVerticalGroup(
@@ -1199,8 +1080,7 @@ public class MetalesDeSantander extends javax.swing.JFrame {
                         .addComponent(jLabel33, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(ListMeses1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel34, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(ListAños1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(ListAños1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel9Layout.createSequentialGroup()
                         .addGap(2, 2, 2)
@@ -1211,13 +1091,30 @@ public class MetalesDeSantander extends javax.swing.JFrame {
                             .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(JTpeso, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel27, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(JTValor, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(JTValor, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 516, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(785, Short.MAX_VALUE))
+                .addContainerGap(1676, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Inventario", jPanel9);
+
+        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
+        jPanel7.setLayout(jPanel7Layout);
+        jPanel7Layout.setHorizontalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1380, Short.MAX_VALUE)
+        );
+        jPanel7Layout.setVerticalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 2287, Short.MAX_VALUE)
+        );
+
+        jTabbedPane1.addTab("Ayuda", jPanel7);
+
+        jLabel1.setFont(new java.awt.Font("Arial", 3, 36)); // NOI18N
+        jLabel1.setText("Metales de santander");
 
         jLabel10.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
         jLabel10.setText("Capital :");
@@ -1253,7 +1150,7 @@ public class MetalesDeSantander extends javax.swing.JFrame {
                         .addComponent(jLabel12)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTabbedPane1)
-                .addGap(56, 56, 56))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -1298,135 +1195,39 @@ public class MetalesDeSantander extends javax.swing.JFrame {
     private void ListMaterialesCB2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ListMaterialesCB2ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_ListMaterialesCB2ActionPerformed
-
-    private void CheckCanceladoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckCanceladoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_CheckCanceladoActionPerformed
-
-    private void BotonTerminarCuentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonTerminarCuentaActionPerformed
-        CCuentas cuenta = new CCuentas();
-        String s = (String) ListaClientesCuentaCB.getSelectedItem();
-        String[] sa = s.split("-");
-        // System.out.println(sa[0]);
-        Integer id = Integer.parseInt(sa[0]);
-        CPrestamos cP = new CPrestamos();
-        Double de = cP.SumPrestamo(id);
-        int abono = 0;
-        if (de != 0) {
-            abono = Integer.parseInt(JOptionPane.showInputDialog(null, "Esta persona tine una deuda de: " + de + " ¿desea cruzar con la cuenta ?"));
-            TextAreaCuentas.append("abona " + abono + " a la deuda de " + de);
-            ValorTotal = ValorTotal - abono;
-            ValorTotalLabel.setText(ValorTotal.toString());
-            cP.AbonoPrestamos(id, abono, de);
-            prestamos.listaPrestamos(TPrestamos);
-        }
-
-        //TextAreaCuentas.append(Cm.toString());
-        TextAreaCuentas.append("\n" + "el valor total= " + ValorTotal.toString());
-        Cuenta nueva = null;
-        if (TipoDePersonaComboBox.getSelectedItem().toString().equals("Proveedor")) {
-            switch (CheckCancelado.getSelectedItem().toString()) {
-                case "Cancelado":
-                    nueva = new Cuenta(1, id, 1, TextAreaCuentas.getText(), ValorTotal);
-                    break;
-                case "Por Cancelar":
-                    nueva = new Cuenta(1, id, 0, TextAreaCuentas.getText(), ValorTotal);
-                    break;
-                default:
-                    throw new AssertionError();
-            }
-        } else {
-            switch (CheckCancelado.getSelectedItem().toString()) {
-                case "Cancelado":
-                    nueva = new Cuenta(2, id, 1, TextAreaCuentas.getText(), ValorTotal);
-                    break;
-                case "Por Cancelar":
-                    nueva = new Cuenta(2, id, 0, TextAreaCuentas.getText(), ValorTotal);
-                    break;
-                default:
-                    throw new AssertionError();
-            }
-
-        }
-
-        JOptionPane.showConfirmDialog(null, "el Valor q se de debe pagar es : " + ValorTotal);
-        Double num = 0.0;
-        Integer idcuenta = cuenta.registrarCuenta(nueva, num);
-        try {
-            /* com.contabilidadmetales.contabilidadmetales.Pdf cuentaPdf = new Pdf();
-            cuentaPdf.pdf_plano(sa[1] + "cuenta", TextAreaCuentas.getText());
-             */
-            pdf(idcuenta, TipoDePersonaComboBox.getSelectedItem().toString());
-
-        } catch (SQLException ex) {
-            Logger.getLogger(MetalesDeSantander.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        TextAreaCuentas.setText("");
-        TextPesada.setText("");
-        ValorTotalLabel.setText("");
-        ValorTotal = 0.0;
-    }//GEN-LAST:event_BotonTerminarCuentaActionPerformed
     String listaTx = null;
     int idselec = 0;
-
-    public void pdf(Integer idfac, String tipo) throws SQLException {
-        String fac = (String) ListaClientesCuentaCB.getSelectedItem();
-        String[] fac2 = fac.split("-");
-        Integer numeroidpersona = Integer.parseInt(fac2[0]);
-        conp = new CPersona();
-        persona pepe = conp.Leerpersonas(numeroidpersona);
-        String nombreArchivo = "factura de " + pepe.getNombre() + ".pdf";
-        String cliente = pepe.getNombre();
-        String direccion = pepe.getDescripcion();
-        LocalDate fechaActual = LocalDate.now();
-        DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd 'de' MMMM 'de' yyyy", new Locale("es", "ES"));
-        String fecha = fechaActual.format(formatoFecha);
-        double importe = Double.parseDouble(ValorTotal.toString());
-        Double kilos = 4.0;
-        FacturaPdf facturaPdf = new FacturaPdf();
-        try {
-            facturaPdf.generarFacturaPdf(nombreArchivo, tipo, idfac, cliente, direccion, fecha, this.cuenta, importe, kilos);
-        } catch (IOException | DocumentException e) {
-            JOptionPane.showConfirmDialog(null, e);
-        }
-    }
 
 
     private void ListaClientesCuentaCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ListaClientesCuentaCBActionPerformed
         try {
-            String[] cn = {"id", "fecha", "valor", "cuenta", "abono"};
+            String[] cn = {"id", "fecha", "valor", "cuenta", "TipoCuenta"};
             TCuentaXC.setModel(new DefaultTableModel(cn, 0));
-            CCuentas cuenta = new CCuentas();
+            TCuentaXC1.setModel(new DefaultTableModel(cn, 0));
+            CCuentas cunetaobjeto = new CCuentas();
             String[] idString = ListaClientesCuentaCB.getSelectedItem().toString().split("-");
             idselec = Integer.parseInt(idString[0]);
-            TextAreaCuentas.setText("");
-            leerClientes();
-            int i = ListaClientesCuentaCB.getSelectedIndex();
-            persona so = listaProbedor.get(i);
             listaTx = conp.listaPresios_idpersonas(idselec);
-            String[] as = listaTx.split(" ");
-            ListMaterialesCB.removeAllItems();
-            for (String a : as) {
-                ListMaterialesCB.addItem(a);
-            }
+            Double Deuda = 0.0;
+            switch (tipo_Cuenta.getSelectedItem().toString()) {
+                case "Compra" -> {
+                    cunetaobjeto.lista_de_Cuentas_x_persona(Integer.parseInt(idString[0]), TCuentaXC1, 1);
+                    cunetaobjeto.lista_de_Cuentas_x_cobrar(Integer.parseInt(idString[0]), TCuentaXC, 0);
+                }
+                case "Venta" -> {
+                    cunetaobjeto.lista_de_Cuentas_x_persona(Integer.parseInt(idString[0]), TCuentaXC1, 2);
+                    cunetaobjeto.lista_de_Cuentas_x_cobrar(Integer.parseInt(idString[0]), TCuentaXC, 0);
 
-            switch (TipoDePersonaComboBox.getSelectedItem().toString()) {
-                case "Proveedor":
-
-                    cuenta.listaCuentasxc(Integer.parseInt(idString[0]), TCuentaXC, 1);
-                    Double Deuda = -1 * cuenta.SumCuentasxd(Integer.parseInt(idString[0]));
-                    DeudaLabel.setText(Deuda.toString());
-                    DeudaLabel.setForeground(Color.red);
-                    break;
-                case "Cliente":
-                    cuenta.listaCuentasxc(Integer.parseInt(idString[0]), TCuentaXC, 2);
-                    Double pago = cuenta.SumCuentasxd(Integer.parseInt(idString[0]));
-                    DeudaLabel.setText(pago.toString());
-                    DeudaLabel.setForeground(Color.GREEN);
-                    break;
-                default:
+                }
+                default ->
                     throw new AssertionError();
+            }
+            Deuda = cunetaobjeto.SumCuentasxd(Integer.parseInt(idString[0]));
+            DeudaLabel.setText(Deuda.toString());
+            if (Deuda > 0) {
+                DeudaLabel.setForeground(Color.GREEN);
+            } else {
+                DeudaLabel.setForeground(Color.RED);
             }
 
         } catch (Exception e) {
@@ -1437,56 +1238,6 @@ public class MetalesDeSantander extends javax.swing.JFrame {
 
     }//GEN-LAST:event_ListaClientesCuentaCBMouseClicked
 
-
-    private void BAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BAgregarActionPerformed
-        String material;
-        double cantidad;
-        double valorx;
-        double costo;
-        String TextoPesada = this.TextPesada.getText();
-        try {
-            cantidad = Double.parseDouble(TextoPesada);
-            String MAterialSelecc = (String) ListMaterialesCB.getSelectedItem();
-            String[] s = MAterialSelecc.split(",");
-            material = s[0];
-            valorx = Double.parseDouble(s[1]);
-            costo = cantidad * valorx;
-            TextAreaCuentas.append(material + " : " + cantidad + " kg x " + valorx + " = " + costo + " $\n");
-            ValorTotal += costo;
-            TextPesada.setText("");
-            if (cuenta.containsKey(material)) {
-                HashMap<String, Double> info = cuenta.get(material);
-                double cantidadActual = info.get("cantidad");
-                double costoActual = info.get("costo");
-                info.put("cantidad", cantidadActual + cantidad);
-                info.put("costo", costoActual + costo);
-            } else {
-                HashMap<String, Double> info = new HashMap<String, Double>();
-                info.put("cantidad", cantidad);
-                info.put("costo", costo);
-                cuenta.put(material, info);
-            }
-
-        } catch (Exception e) {
-            TextPesada.setText("");
-            JOptionPane.showConfirmDialog(null, "Recuerde q solo se admiten numeros desimales o enteros");
-        }
-        ValorTotalLabel.setText(ValorTotal.toString());
-    }//GEN-LAST:event_BAgregarActionPerformed
-
-    private void ListMaterialesCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ListMaterialesCBActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_ListMaterialesCBActionPerformed
-
-    private void TextPesadaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TextPesadaActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_TextPesadaActionPerformed
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-
-        ActualizarListaPrecios a = new ActualizarListaPrecios(listaTx, idselec);
-        a.setVisible(true);
-    }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
@@ -1509,8 +1260,9 @@ public class MetalesDeSantander extends javax.swing.JFrame {
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
-        int estado = 1;
-        Double valorG = Double.parseDouble(ValorI.getText());
+
+        FTipoMovimiento nwe = new FTipoMovimiento();
+        nwe.setVisible(true);
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
@@ -1577,58 +1329,20 @@ public class MetalesDeSantander extends javax.swing.JFrame {
     LocalDate FechaAnterior;
     LocalDate FechaActual;
     Filtros nueas;
-    private void TextPesadaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_TextPesadaKeyPressed
-        // TODO add your handling code here:
-        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            String material;
-            double cantidad;
-            double valorx;
-            double costo;
-            String TextoPesada = this.TextPesada.getText();
-            try {
-                cantidad = Double.parseDouble(TextoPesada);
-                String MAterialSelecc = (String) ListMaterialesCB.getSelectedItem();
-                String[] s = MAterialSelecc.split(",");
-                material = s[0];
-                valorx = Double.parseDouble(s[1]);
-                costo = cantidad * valorx;
-                TextAreaCuentas.append(material + " : " + cantidad + " kg x " + valorx + " = " + costo + " $\n");
-                ValorTotal += costo;
-                TextPesada.setText("");
-                if (cuenta.containsKey(material)) {
-                    HashMap<String, Double> info = cuenta.get(material);
-                    double cantidadActual = info.get("cantidad");
-                    double costoActual = info.get("costo");
-                    info.put("cantidad", cantidadActual + cantidad);
-                    info.put("costo", costoActual + costo);
-                } else {
-                    HashMap<String, Double> info = new HashMap<String, Double>();
-                    info.put("cantidad", cantidad);
-                    info.put("costo", costo);
-                    cuenta.put(material, info);
-                }
-
-            } catch (Exception e) {
-                TextPesada.setText("");
-                JOptionPane.showConfirmDialog(null, "Recuerde q solo se admiten numeros desimales o enteros");
-            }
-            ValorTotalLabel.setText(ValorTotal.toString());
-        }
-    }//GEN-LAST:event_TextPesadaKeyPressed
-
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
         fechaAnterior = obtenerFechasinferior();
         fechaActual = obtenerFechassuperir();
         material = ListMaterialesInve.getSelectedItem().toString();
         int idMaterialo = cc.obtenerIdMaterialPorNombre(material);
-        System.out.println(idMaterialo);
-        System.out.println(fechaAnterior);
-        System.out.println(fechaActual);
         inve.obtenerSumaPesoYValorPorFechasYMaterial(fechaAnterior, fechaActual, idMaterialo, JTpeso, JTValor);
-        String [] va={"idInventario", "peso", "Descripcion", "idMaterial", "Valor", "fecha"};
-        TInventario.setModel(new DefaultTableModel(va,0));
-        ArrayList<Inventario> ju=inve.obtenerMaterialesPorFechasXidMaterial(TInventario,fechaAnterior, fechaActual, idMaterialo);
-        
+        String[] va=  {"idInventario", "peso", "Descripcion", "idMaterial", "Valor", "fecha"};
+        TInventario.setModel(new DefaultTableModel(va,0 ));
+        ArrayList<Inventario> inventarioList = inve.obtenerMaterialesPorFechasXidMaterial(TInventario, fechaAnterior, fechaActual, idMaterialo);
+        InventarioReportGenerator ss = new InventarioReportGenerator();
+        // Generar el informe en PDF
+        ss.generateReport(inventarioList, fechaAnterior, fechaActual, material, "Informe_" + fechaActual + ".pdf");
+
+        System.out.println("Informe generado correctamente.");
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void ListDiasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ListDiasActionPerformed
@@ -1657,13 +1371,144 @@ public class MetalesDeSantander extends javax.swing.JFrame {
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
         // TODO add your handling code here:
-    Cuentas vv=new Cuentas(tipoCb.getSelectedItem().toString(),TipoDePersonaComboBox.getSelectedItem().toString() );
-    vv.setVisible(true);
+        Cuentas vv = new Cuentas(TipoDePersonaComboBox.getSelectedItem().toString());
+        vv.setVisible(true);
     }//GEN-LAST:event_jButton8ActionPerformed
+    public void pdf(Integer idfac, Double total, ArrayList<Pesada> pesadasx) throws SQLException, IOException, DocumentException {
+        FacturaPdf facturaPdf = null;
+        String fac = (String) ListaClientesCuentaCB.getSelectedItem();
+        String[] fac2 = fac.split("-");
 
-    private void tipoCbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipoCbActionPerformed
+        Integer numeroidpersona = Integer.parseInt(fac2[0]);
+        conp = new CPersona();
+        persona pepe = conp.Leerpersonas(numeroidpersona);
+        String nombreArchivo = "factura de " + pepe.getNombre() + ".pdf";
+        String cliente = pepe.getNombre();
+        String direccion = pepe.getDescripcion();
+        LocalDate fechaActual = LocalDate.now();
+        DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd 'de' MMMM 'de' yyyy", new Locale("es", "ES"));
+        String fecha = fechaActual.format(formatoFecha);
+        double importe = Double.parseDouble(total.toString());
+        Double kilos = 4.0;
+        facturaPdf = new FacturaPdf();
+        facturaPdf.generarFacturaPdf(nombreArchivo, tipo_Cuenta.getSelectedItem().toString(), idfac, cliente, direccion, fecha, pesadasx, importe, kilos);
+        pesadasx = null;
+    }
+
+    private void BotonabonarCC1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonabonarCC1ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_tipoCbActionPerformed
+        ArrayList<Pesada> listaPesadas = new ArrayList<>();
+        String cuenta = null;
+        int selectedRow = TCuentaXC1.getSelectedRow(); // obtiene el número de fila seleccionado
+        Integer value = Integer.parseInt(TCuentaXC1.getValueAt(selectedRow, 0).toString()); // obtiene el valor de la primera columna de la fila seleccionada
+        Double totalx = Double.parseDouble(TCuentaXC1.getValueAt(selectedRow, 2).toString());
+        cuenta = TCuentaXC1.getValueAt(selectedRow, 3).toString();
+        String[] pesadas = cuenta.split("\n");
+        for (String pesadaString : pesadas) {
+            if (pesadaString.isEmpty() || pesadaString.startsWith("el valor total")) {
+                continue; // Ignorar líneas vacías o la línea "el valor total"
+            }
+            String[] partes = pesadaString.split(", ");
+            int id = Integer.parseInt(partes[0].split("=")[1]);
+            String material = partes[1].split(" ")[1];
+            double pesada = Double.parseDouble(partes[1].split(" ")[3]);
+            double valor = Double.parseDouble(partes[1].split(" ")[5]);
+            Pesada pesadaObj = new Pesada(id, material, pesada, valor);
+            listaPesadas.add(pesadaObj);
+        }
+
+        try {
+            pdf(value, totalx, listaPesadas);
+        } catch (SQLException ex) {
+            Logger.getLogger(MetalesDeSantander.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(MetalesDeSantander.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (DocumentException ex) {
+            Logger.getLogger(MetalesDeSantander.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+
+    }//GEN-LAST:event_BotonabonarCC1ActionPerformed
+
+    private void tipo_CuentaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tipo_CuentaMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tipo_CuentaMouseClicked
+
+    private void tipo_CuentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipo_CuentaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tipo_CuentaActionPerformed
+
+    private void BotonabonarCC2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonabonarCC2ActionPerformed
+        // TODO add your handling code here:
+        ArrayList<Pesada> listaPesadas = new ArrayList<>();
+        String cuenta = null;
+        int selectedRow = TCuentaXC.getSelectedRow(); // obtiene el número de fila seleccionado
+        Integer value = Integer.parseInt(TCuentaXC.getValueAt(selectedRow, 0).toString()); // obtiene el valor de la primera columna de la fila seleccionada
+        Double totalx = Double.parseDouble(TCuentaXC.getValueAt(selectedRow, 2).toString());
+        cuenta = TCuentaXC.getValueAt(selectedRow, 3).toString();
+        String[] pesadas = cuenta.split("\n");
+        for (String pesadaString : pesadas) {
+            if (pesadaString.isEmpty() || pesadaString.startsWith("el valor total")) {
+                continue; // Ignorar líneas vacías o la línea "el valor total"
+            }
+            String[] partes = pesadaString.split(", ");
+            int id = Integer.parseInt(partes[0].split("=")[1]);
+            String material = partes[1].split(" ")[1];
+            double pesada = Double.parseDouble(partes[1].split(" ")[3]);
+            double valor = Double.parseDouble(partes[1].split(" ")[5]);
+            Pesada pesadaObj = new Pesada(id, material, pesada, valor);
+            listaPesadas.add(pesadaObj);
+        }
+
+        try {
+            pdf(value, totalx, listaPesadas);
+        } catch (SQLException ex) {
+            Logger.getLogger(MetalesDeSantander.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(MetalesDeSantander.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (DocumentException ex) {
+            Logger.getLogger(MetalesDeSantander.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_BotonabonarCC2ActionPerformed
+
+    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton9ActionPerformed
+
+    private void EliminarTipoMovimientoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EliminarTipoMovimientoActionPerformed
+        // TODO add your handling code here:
+        TipoMovimientoController nuevo = new TipoMovimientoController();
+        nuevo.eliminarTipoMovimientoPorNombre(TipoMovimiento.getSelectedItem().toString());
+    }//GEN-LAST:event_EliminarTipoMovimientoActionPerformed
+
+    private void TipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TipoActionPerformed
+        // TODO add your handling code here:
+        TipoMovimientoController nuevo = new TipoMovimientoController();
+        switch (Tipo.getSelectedItem().toString()) {
+            case "Ingreso":
+                String[] listaGastos = nuevo.obtenerTiposGastos2();
+                DefaultComboBoxModel cx = new DefaultComboBoxModel(listaGastos);
+                TipoMovimiento.setModel(cx);
+                break;
+            case "Egresos":
+                String[] listaIngresos = nuevo.obtenerTiposIngresos2();
+                DefaultComboBoxModel cc = new DefaultComboBoxModel(listaIngresos);
+                TipoMovimiento.setModel(cc);
+                break;
+            default:
+                throw new AssertionError();
+        }
+    }//GEN-LAST:event_TipoActionPerformed
+
+    private void Valor1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_Valor1KeyPressed
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_Valor1KeyPressed
+
+    private void Valor1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Valor1ActionPerformed
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_Valor1ActionPerformed
     Double ValorTotal = 0.0;
     ArrayList<Cuenta> listaCuenta;
     ArrayList<Cuenta> listaCuenta2;
@@ -1686,43 +1531,37 @@ public class MetalesDeSantander extends javax.swing.JFrame {
             ListaClientesCuentaCB.addItem(provedor.getId() + "-" + provedor.getNombre());
         }
     }
-   
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton BAgregar;
     private javax.swing.JButton BAgregarClientes;
-    private javax.swing.JButton BAgregarClientes1;
-    private javax.swing.JButton BotonTerminarCuenta;
     private javax.swing.JButton BotonabonarCC;
+    private javax.swing.JButton BotonabonarCC1;
+    private javax.swing.JButton BotonabonarCC2;
     private javax.swing.JButton CancelarCuenta;
-    private javax.swing.JComboBox<String> CheckCancelado;
     private javax.swing.JLabel DeudaLabel;
     private javax.swing.JButton EditarCliente;
-    private javax.swing.JButton EditarCliente1;
     private javax.swing.JButton EditarCliente2;
+    private javax.swing.JButton EliminarTipoMovimiento;
     private javax.swing.JTextField JTValor;
     private javax.swing.JTextField JTpeso;
     private javax.swing.JComboBox<String> ListAños;
     private javax.swing.JComboBox<String> ListAños1;
     private javax.swing.JComboBox<String> ListDias;
     private javax.swing.JComboBox<String> ListDias1;
-    private javax.swing.JComboBox<String> ListMaterialesCB;
     private javax.swing.JComboBox<String> ListMaterialesCB2;
     private javax.swing.JComboBox<String> ListMaterialesInve;
     private javax.swing.JComboBox<String> ListMeses;
     private javax.swing.JComboBox<String> ListMeses1;
     private javax.swing.JComboBox<String> ListaClientesCuentaCB;
     private javax.swing.JTable TClientes;
-    private javax.swing.JTable TClientes1;
     private javax.swing.JTable TCuentaXC;
+    private javax.swing.JTable TCuentaXC1;
     private javax.swing.JTable TInventario;
     private javax.swing.JTable TPrestamos;
-    private javax.swing.JTextArea TextAreaCuentas;
-    private javax.swing.JTextField TextPesada;
     private javax.swing.JComboBox<String> Tipo;
     private javax.swing.JComboBox<String> TipoDePersonaComboBox;
-    private javax.swing.JTextField ValorI;
-    private javax.swing.JLabel ValorTotalLabel;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JComboBox<String> TipoMovimiento;
+    private javax.swing.JTextField Valor1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
@@ -1730,6 +1569,7 @@ public class MetalesDeSantander extends javax.swing.JFrame {
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
+    private javax.swing.JButton jButton9;
     private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JCheckBox jCheckBox3;
     private javax.swing.JLabel jLabel1;
@@ -1749,14 +1589,12 @@ public class MetalesDeSantander extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel27;
     private javax.swing.JLabel jLabel28;
     private javax.swing.JLabel jLabel29;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel30;
     private javax.swing.JLabel jLabel31;
     private javax.swing.JLabel jLabel32;
     private javax.swing.JLabel jLabel33;
     private javax.swing.JLabel jLabel34;
     private javax.swing.JLabel jLabel35;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
@@ -1767,30 +1605,27 @@ public class MetalesDeSantander extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
-    private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane10;
     private javax.swing.JScrollPane jScrollPane12;
+    private javax.swing.JScrollPane jScrollPane13;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
-    private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JScrollPane jScrollPane8;
     private javax.swing.JScrollPane jScrollPane9;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTable jTable1;
     private javax.swing.JTextArea jTextArea2;
-    private javax.swing.JTextArea jTextArea3;
     private javax.swing.JTextArea jTextArea4;
     private javax.swing.JTextArea jTextArea5;
     private javax.swing.JTextArea jTextArea6;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
-    private javax.swing.JToggleButton jToggleButton1;
-    private javax.swing.JToggleButton jToggleButton2;
-    private javax.swing.JComboBox<String> tipoCb;
+    private javax.swing.JComboBox<String> tipo_Cuenta;
     // End of variables declaration//GEN-END:variables
 }

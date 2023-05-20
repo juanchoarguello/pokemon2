@@ -65,7 +65,7 @@ public class CPersona {
         try {
             Statement ps = null;
             CConexion objetoConexion = new CConexion();
-            String sql = "SELECT * FROM metalesdb.personas where IdTP=" + TipoPersona + ";";
+            String sql = "SELECT * FROM personas where IdTP=" + TipoPersona + ";";
             ps = objetoConexion.estableceConexion().createStatement();
             ResultSet rs = ps.executeQuery(sql);
             ArrayList<persona> listaProbedor = new ArrayList<>();
@@ -89,13 +89,13 @@ public class CPersona {
         }
 
     }
-    //SELECT Archivo FROM metalesdb.personas where idpersonas=;
+    //SELECT Archivo FROM personas where idpersonas=;
 
     public String listaPresios_idpersonas(int idpersonas) {
         try {
             Statement ps = null;
             CConexion objetoConexion = new CConexion();
-            String sql = "SELECT Archivo FROM metalesdb.personas where idpersonas=" + idpersonas + ";";
+            String sql = "SELECT Archivo FROM personas where idpersonas=" + idpersonas + ";";
             ps = objetoConexion.estableceConexion().createStatement();
             ResultSet rs = ps.executeQuery(sql);
             rs.next();
