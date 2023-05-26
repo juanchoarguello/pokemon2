@@ -234,21 +234,19 @@ public class CCuentas {
         }
     }
 
-    public Boolean modificarCuentaValor(int id, Double valor) {
-        Statement st;
-        try {
-            CConexion objetoConexion = new CConexion();
-            PreparedStatement stmt;
-            stmt = objetoConexion.estableceConexion().prepareStatement("UPDATE cuentas SET Valor=" + valor + " WHERE idcuentas=" + id + ";");
-            int retorno = stmt.executeUpdate();
-            if (retorno == 1) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (SQLException ex) {
-            JOptionPane.showInputDialog(null, "No se han podido actualizar los datos " + ex);
-            return false;
-        }
+    public Boolean modificarCuentaValor(int id, Double valor, String cuenta) {
+    try {
+        CConexion objetoConexion = new CConexion();
+        PreparedStatement stmt = objetoConexion.estableceConexion().prepareStatement("UPDATE cuentas SET Valor=?, Cuenta=CONCAT(Cuenta, ?) WHERE idcuentas=?");
+        stmt.setDouble(1, valor);
+        stmt.setString(2, cuenta);
+        stmt.setInt(3, id);
+        int retorno = stmt.executeUpdate();
+        return retorno == 1;
+    } catch (SQLException ex) {
+        JOptionPane.showInputDialog(null, "No se ha podido actualizar los datos: " + ex);
+        return false;
     }
+}
+
 }
