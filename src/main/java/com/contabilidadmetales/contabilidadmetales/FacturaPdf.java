@@ -19,9 +19,12 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfWriter;
 
 public class FacturaPdf {
-    
+    private Double totalAnteriord;
 
-    public void generarFacturaPdf(String nombreArchivo, String Tipo, Integer idfactura, String cliente, String direccion,
+    public void setTotalAnteriord(Double totalAnteriord) {
+        this.totalAnteriord = totalAnteriord;
+    }
+    public void generarFacturaPdf(Boolean es_copia, String nombreArchivo, String Tipo, Integer idfactura, String cliente, String direccion,
             String fecha, ArrayList<Pesada> pesadas, double total, Double kilos) throws IOException, DocumentException, SQLException {
         // Crear documento PDF
         FacturaPdf facturaPdf = new FacturaPdf();
@@ -102,15 +105,15 @@ public class FacturaPdf {
             int idMaterial = materiales.obtenerIdMaterialPorNombre(material);
 
             // Agregar el material al inventario en MySQL dependiendo del tipo de factura
-            switch (Tipo) {
-                case "Compra":
-                    inventario.agregarMaterial(-cantidad, idfactura.toString(), idMaterial, total1);
-                    break;
-                case "Venta":
-                    inventario.agregarMaterial(cantidad, idfactura.toString(), idMaterial, -total1);
-                    break;
-                default:
-                    throw new AssertionError();
+            if (es_copia.equals(false)) {
+                switch (Tipo) {
+                    case "Compra" ->
+                        inventario.agregarMaterial(-cantidad, idfactura.toString(), idMaterial, total1);
+                    case "Venta" ->
+                        inventario.agregarMaterial(cantidad, idfactura.toString(), idMaterial, -total1);
+                    default ->
+                        throw new AssertionError();
+                }
             }
 
             cell = new com.itextpdf.text.pdf.PdfPCell(new Phrase(material, datosTablaFont));
@@ -139,6 +142,14 @@ public class FacturaPdf {
         }
 
         document.add(table);
+
+        if (es_copia) {
+            Paragraph totalAnterior = new Paragraph();
+            totalAnterior.add(new Phrase("\nTotal Anterior: $" + totalAnteriord, datosFont));
+            totalAnterior.setAlignment(Element.ALIGN_RIGHT);
+            totalAnterior.setSpacingBefore(10f);
+            document.add(totalAnterior);
+        }
 
         // Agregar total
         Paragraph totalP = new Paragraph();

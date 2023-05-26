@@ -7,6 +7,7 @@ package com.contabilidadmetales.contabilidadmetales.controlador;
 import com.contabilidadmetales.contabilidadmetales.CConexion;
 import com.contabilidadmetales.contabilidadmetales.modelo.Inventario;
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 import javax.swing.JTable;
@@ -168,6 +169,8 @@ public class CInventario {
                 Integer idMateriall = resultSet.getInt("idMaterial");
                 Double valor = resultSet.getDouble("valor");
                 Timestamp fecha = resultSet.getTimestamp("fecha");
+                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                
                 String[] vc = {id.toString(), peso.toString(), descripcion.toString(), idMateriall.toString(),valor.toString(), fecha.toString()};
                 fa.addRow(vc);
                 Inventario material = new Inventario(id, peso, descripcion, idMaterial, valor, fecha);

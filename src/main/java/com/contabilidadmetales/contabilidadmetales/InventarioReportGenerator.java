@@ -18,17 +18,21 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 import java.awt.Color;
+import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import org.jfree.chart.ChartUtils;
+
 
 public class InventarioReportGenerator {
 
     private static final Font HEADER_FONT = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD);
     private static final Font DATA_FONT = new Font(Font.FontFamily.HELVETICA, 10);
 
-    public static void generateReport(List<Inventario> inventarioList, LocalDate fechaAnterior, LocalDate fechaActual, String materialFiltro, String outputPath) {
+    public static void generateReport(Double peso,Double valor,List<Inventario> inventarioList, LocalDate fechaAnterior, LocalDate fechaActual, String materialFiltro, String outputPath) {
         Document document = new Document();
         try {
             PdfWriter.getInstance(document, new FileOutputStream(outputPath));
@@ -36,8 +40,45 @@ public class InventarioReportGenerator {
             addTitle(document);
             addFilterInfo(document, fechaAnterior, fechaActual, materialFiltro);
             addTable(document, inventarioList);
+            /*------------------------------------------*/
+            // Crear las celdas para la fila adicional
+            PdfPCell pesoCell = new PdfPCell(new Phrase("Peso (Kg) =  "+peso));
+            PdfPCell valorCell = new PdfPCell(new Phrase("Valor (COP $) =  "+valor));
+
+            PdfPCell pesoValorCell = new PdfPCell();
+            PdfPCell valorValorCell = new PdfPCell();
+            // Establecer los valores específicos en las celdas
+            
+            // Crear una tabla para la fila adicional
+            PdfPTable additionalRowTable = new PdfPTable(2);
+            additionalRowTable.setWidthPercentage(100);
+
+            // Añadir las celdas a la tabla
+            additionalRowTable.addCell(pesoCell);
+            additionalRowTable.addCell(valorCell);
+
+            // Añadir la tabla adicional al documento
+            document.add(additionalRowTable);
+
+            /*------------------------------------------*/
             addChart(document, inventarioList, fechaAnterior, fechaActual);
             document.close();
+            // Reemplaza con la ruta real de tu archivo PDF
+
+            // Verificar si Desktop está soportado en el sistema
+            if (Desktop.isDesktopSupported()) {
+                Desktop desktop = Desktop.getDesktop();
+                File file = new File(outputPath);
+
+                try {
+                    // Abrir el archivo PDF con el programa predeterminado
+                    desktop.open(file);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.println("Desktop no está soportado en este sistema.");
+            }
         } catch (DocumentException | IOException e) {
             e.printStackTrace();
         }
@@ -49,7 +90,10 @@ public class InventarioReportGenerator {
 
         for (Inventario inventario : inventarioList) {
             // Aquí debes ajustar las llamadas a los métodos de tu clase Inventario según la estructura de tu objeto
-            dataset.addValue(Double.valueOf(inventario.getPeso()), "material: "+inventario.getIdMaterial(), inventario.getFecha().toString());
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            Timestamp fecha =inventario.getFecha();
+            String fechaFormateada = dateFormat.format(fecha);
+            dataset.addValue(Double.valueOf(inventario.getPeso()), "material: " + inventario.getIdMaterial(), fechaFormateada);
 
         }
 
@@ -122,8 +166,12 @@ public class InventarioReportGenerator {
             table.addCell(new PdfPCell(new Phrase(inventario.getDescripcion(), DATA_FONT)));
             table.addCell(new PdfPCell(new Phrase(String.valueOf(inventario.getIdMaterial()), DATA_FONT)));
             table.addCell(new PdfPCell(new Phrase(String.valueOf(inventario.getValor()), DATA_FONT)));
-            table.addCell(new PdfPCell(new Phrase(inventario.getFecha().toString(), DATA_FONT)));
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            Timestamp fecha =inventario.getFecha();
+            String fechaFormateada = dateFormat.format(fecha);
+            table.addCell(new PdfPCell(new Phrase(fechaFormateada, DATA_FONT)));
         }
+
     }
 
 // ...

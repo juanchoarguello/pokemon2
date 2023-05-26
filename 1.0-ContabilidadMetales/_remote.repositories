@@ -1,0 +1,5 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Fri May 26 01:44:34 COT 2023
+ContabilidadMetales-1.0-ContabilidadMetales-jar-with-dependencies.jar>=
+ContabilidadMetales-1.0-ContabilidadMetales.jar>=
+ContabilidadMetales-1.0-ContabilidadMetales.pom>=

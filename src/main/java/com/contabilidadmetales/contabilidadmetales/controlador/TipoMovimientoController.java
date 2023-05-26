@@ -94,12 +94,11 @@ public class TipoMovimientoController {
 
     }
 
-     // Obtener tipos de gastos
+    // Obtener tipos de gastos
     public String[] obtenerTiposGastos2() {
         List<String> tiposGastos = new ArrayList<>();
         String query = "SELECT descripcion FROM tipos_movimientos WHERE es_gasto = ?";
-        try (Connection connection = conexion.estableceConexion();
-             PreparedStatement statement = connection.prepareStatement(query)) {
+        try ( Connection connection = conexion.estableceConexion();  PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, 1);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -111,13 +110,12 @@ public class TipoMovimientoController {
         }
         return tiposGastos.toArray(new String[0]);
     }
-    
+
     // Obtener tipos de ingresos
     public String[] obtenerTiposIngresos2() {
         List<String> tiposIngresos = new ArrayList<>();
         String query = "SELECT descripcion FROM tipos_movimientos WHERE es_gasto = ?";
-        try (Connection connection = conexion.estableceConexion();
-             PreparedStatement statement = connection.prepareStatement(query)) {
+        try ( Connection connection = conexion.estableceConexion();  PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, 0);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -129,11 +127,47 @@ public class TipoMovimientoController {
         }
         return tiposIngresos.toArray(new String[0]);
     }
-    
-    
-    
-    
-    
+
+   
+
+    // Obtener un tipo de ingreso por nombre
+    public TipoMovimiento obtenerTipoIngresoPorNombre(String nombre) {
+        TipoMovimiento tipoIngreso = null;
+        String query = "SELECT * FROM tipos_movimientos WHERE descripcion = ? AND tipos_movimientos = false";
+        try ( Connection connection = conexion.estableceConexion();  PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, nombre);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String descripcion = resultSet.getString("descripcion");
+                boolean esGasto = resultSet.getBoolean("tipos_movimientos");
+                tipoIngreso = new TipoMovimiento(id, descripcion, esGasto);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return tipoIngreso;
+    }
+
+    // Obtener un tipo de movimiento por nombre
+    public TipoMovimiento obtenerTipoMovimientoPorNombre(String nombre) {
+        TipoMovimiento tipoMovimiento = null;
+        String query = "SELECT * FROM tipos_movimientos WHERE descripcion = ?";
+        try ( Connection connection = conexion.estableceConexion();  PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, nombre);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String descripcion = resultSet.getString("descripcion");
+                boolean esGasto = resultSet.getBoolean("es_gasto");
+                tipoMovimiento = new TipoMovimiento(id, descripcion, esGasto);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return tipoMovimiento;
+    }
+
     // Eliminar un tipo de movimiento por el nombre
     public void eliminarTipoMovimientoPorNombre(String nombre) {
         String query = "DELETE FROM tipos_movimientos WHERE descripcion = ?";

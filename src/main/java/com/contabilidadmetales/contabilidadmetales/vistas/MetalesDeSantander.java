@@ -4,19 +4,18 @@
  */
 package com.contabilidadmetales.contabilidadmetales.vistas;
 
+import com.contabilidadmetales.contabilidadmetales.CajaMenorReporteGenerator;
 import com.contabilidadmetales.contabilidadmetales.FacturaPdf;
 import com.contabilidadmetales.contabilidadmetales.InventarioReportGenerator;
 import com.contabilidadmetales.contabilidadmetales.controlador.CCuentas;
 import com.contabilidadmetales.contabilidadmetales.controlador.CInventario;
 import com.contabilidadmetales.contabilidadmetales.controlador.CPersona;
 import com.contabilidadmetales.contabilidadmetales.controlador.CPrestamos;
+import com.contabilidadmetales.contabilidadmetales.controlador.CajaMenorController;
 import com.contabilidadmetales.contabilidadmetales.modelo.Cuenta;
 import com.contabilidadmetales.contabilidadmetales.modelo.persona;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Toolkit;
 import java.time.LocalDate;
-import java.util.HashMap;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -25,6 +24,7 @@ import com.contabilidadmetales.contabilidadmetales.controlador.Materiales;
 import com.contabilidadmetales.contabilidadmetales.controlador.TipoMovimientoController;
 import com.contabilidadmetales.contabilidadmetales.modelo.Inventario;
 import com.contabilidadmetales.contabilidadmetales.modelo.Material;
+import com.contabilidadmetales.contabilidadmetales.modelo.MovimientoCajaMenor;
 import com.contabilidadmetales.contabilidadmetales.modelo.Pesada;
 import com.contabilidadmetales.contabilidadmetales.modelo.TipoMovimiento;
 import com.itextpdf.text.DocumentException;
@@ -38,6 +38,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
+import java.sql.Date;
 
 /**
  *
@@ -65,28 +66,22 @@ public class MetalesDeSantander extends javax.swing.JFrame {
         }
         return TipoDePersona;
     }
-    private int idUsuario;
-    HashMap<String, HashMap<String, Double>> cuenta;
 
     public MetalesDeSantander(int id) {
-        cuenta = new HashMap<String, HashMap<String, Double>>();
-        this.idUsuario = id;
         conp = new CPersona();
         initComponents();
         prestamos = new CPrestamos();
         prestamos.listaPrestamos(TPrestamos);
         optenerListaProbedor(selec());
-        Toolkit t = Toolkit.getDefaultToolkit();
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        int dimencionX = (int) screenSize.getWidth();
-        int dimenciony = (int) screenSize.getHeight();
         DefaultTableModel model = (DefaultTableModel) TInventario.getModel();
         try {
             llenarTabla(model);
         } catch (SQLException ex) {
             JOptionPane.showConfirmDialog(null, "falla al llenar la sita");
         }
+        CajaMenorController caja = new CajaMenorController();
+        caja.obtenerMovimientosCajaMenortabla(TablaCajaMenor);
         MetodoComboboxInventario(ListMaterialesInve);
         MetodoAnoComboBox(ListAños);
         MEtodoMesesDias(ListMeses, ListDias);
@@ -221,29 +216,6 @@ public class MetalesDeSantander extends javax.swing.JFrame {
         BotonabonarCC1 = new javax.swing.JButton();
         tipo_Cuenta = new javax.swing.JComboBox<>();
         BotonabonarCC2 = new javax.swing.JButton();
-        jPanel3 = new javax.swing.JPanel();
-        jLabel13 = new javax.swing.JLabel();
-        ListMaterialesCB2 = new javax.swing.JComboBox<>();
-        jLabel16 = new javax.swing.JLabel();
-        jCheckBox2 = new javax.swing.JCheckBox();
-        jScrollPane6 = new javax.swing.JScrollPane();
-        jTextArea2 = new javax.swing.JTextArea();
-        jLabel17 = new javax.swing.JLabel();
-        jLabel18 = new javax.swing.JLabel();
-        jScrollPane8 = new javax.swing.JScrollPane();
-        jTextArea4 = new javax.swing.JTextArea();
-        jLabel19 = new javax.swing.JLabel();
-        jScrollPane9 = new javax.swing.JScrollPane();
-        jTextArea5 = new javax.swing.JTextArea();
-        jButton5 = new javax.swing.JButton();
-        jLabel20 = new javax.swing.JLabel();
-        jScrollPane10 = new javax.swing.JScrollPane();
-        jTextArea6 = new javax.swing.JTextArea();
-        jCheckBox3 = new javax.swing.JCheckBox();
-        jLabel21 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
-        jLabel22 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
         jPanel6 = new javax.swing.JPanel();
         BAgregarClientes = new javax.swing.JButton();
         EditarCliente = new javax.swing.JButton();
@@ -251,10 +223,10 @@ public class MetalesDeSantander extends javax.swing.JFrame {
         TClientes = new javax.swing.JTable();
         EditarCliente2 = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
-        jTextField1 = new javax.swing.JTextField();
+        Descripcion = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        Valor1 = new javax.swing.JTextField();
+        Valor_dinero = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
         jButton6 = new javax.swing.JButton();
         Tipo = new javax.swing.JComboBox<>();
@@ -262,7 +234,9 @@ public class MetalesDeSantander extends javax.swing.JFrame {
         jButton9 = new javax.swing.JButton();
         EliminarTipoMovimiento = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        TablaCajaMenor = new javax.swing.JTable();
+        TipoInforme = new javax.swing.JComboBox<>();
+        jButton10 = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
@@ -293,6 +267,7 @@ public class MetalesDeSantander extends javax.swing.JFrame {
         ListAños1 = new javax.swing.JComboBox<>();
         jLabel35 = new javax.swing.JLabel();
         jLabel30 = new javax.swing.JLabel();
+        jButton12 = new javax.swing.JButton();
         jPanel7 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
@@ -332,6 +307,17 @@ public class MetalesDeSantander extends javax.swing.JFrame {
             }
         ));
         jScrollPane12.setViewportView(TCuentaXC);
+        if (TCuentaXC.getColumnModel().getColumnCount() > 0) {
+            TCuentaXC.getColumnModel().getColumn(0).setMinWidth(80);
+            TCuentaXC.getColumnModel().getColumn(0).setPreferredWidth(80);
+            TCuentaXC.getColumnModel().getColumn(0).setMaxWidth(80);
+            TCuentaXC.getColumnModel().getColumn(1).setMinWidth(80);
+            TCuentaXC.getColumnModel().getColumn(1).setPreferredWidth(80);
+            TCuentaXC.getColumnModel().getColumn(1).setMaxWidth(80);
+            TCuentaXC.getColumnModel().getColumn(2).setMinWidth(80);
+            TCuentaXC.getColumnModel().getColumn(2).setPreferredWidth(80);
+            TCuentaXC.getColumnModel().getColumn(2).setMaxWidth(80);
+        }
 
         jLabel7.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
         jLabel7.setText("CUENTAS POR COBRAR");
@@ -382,9 +368,20 @@ public class MetalesDeSantander extends javax.swing.JFrame {
             }
         ));
         jScrollPane13.setViewportView(TCuentaXC1);
+        if (TCuentaXC1.getColumnModel().getColumnCount() > 0) {
+            TCuentaXC1.getColumnModel().getColumn(0).setMinWidth(80);
+            TCuentaXC1.getColumnModel().getColumn(0).setPreferredWidth(80);
+            TCuentaXC1.getColumnModel().getColumn(0).setMaxWidth(80);
+            TCuentaXC1.getColumnModel().getColumn(1).setMinWidth(80);
+            TCuentaXC1.getColumnModel().getColumn(1).setPreferredWidth(80);
+            TCuentaXC1.getColumnModel().getColumn(1).setMaxWidth(80);
+            TCuentaXC1.getColumnModel().getColumn(2).setMinWidth(80);
+            TCuentaXC1.getColumnModel().getColumn(2).setPreferredWidth(80);
+            TCuentaXC1.getColumnModel().getColumn(2).setMaxWidth(80);
+        }
 
         BotonabonarCC1.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        BotonabonarCC1.setText("generar factura");
+        BotonabonarCC1.setText("Generar Factura");
         BotonabonarCC1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BotonabonarCC1ActionPerformed(evt);
@@ -405,7 +402,7 @@ public class MetalesDeSantander extends javax.swing.JFrame {
         });
 
         BotonabonarCC2.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        BotonabonarCC2.setText("factura");
+        BotonabonarCC2.setText("Generar factura");
         BotonabonarCC2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BotonabonarCC2ActionPerformed(evt);
@@ -478,149 +475,10 @@ public class MetalesDeSantander extends javax.swing.JFrame {
                         .addComponent(CancelarCuenta)
                         .addComponent(BotonabonarCC2))
                     .addComponent(BotonabonarCC1))
-                .addContainerGap(1719, Short.MAX_VALUE))
+                .addContainerGap(1942, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Cuenta", jPanel2);
-
-        jLabel13.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        jLabel13.setText("Material ");
-
-        ListMaterialesCB2.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        ListMaterialesCB2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ListMaterialesCB2ActionPerformed(evt);
-            }
-        });
-
-        jLabel16.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        jLabel16.setText("Filtros");
-
-        jCheckBox2.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        jCheckBox2.setText("In / eg");
-
-        jTextArea2.setColumns(20);
-        jTextArea2.setRows(5);
-        jScrollPane6.setViewportView(jTextArea2);
-
-        jLabel17.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        jLabel17.setText("Fecha");
-
-        jLabel18.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        jLabel18.setText("Valor");
-
-        jTextArea4.setColumns(20);
-        jTextArea4.setRows(5);
-        jScrollPane8.setViewportView(jTextArea4);
-
-        jLabel19.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        jLabel19.setText("Material / otros");
-
-        jTextArea5.setColumns(20);
-        jTextArea5.setRows(5);
-        jScrollPane9.setViewportView(jTextArea5);
-
-        jButton5.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        jButton5.setText("Aplicar Filtro");
-
-        jLabel20.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        jLabel20.setText("Decripcion");
-
-        jTextArea6.setColumns(20);
-        jTextArea6.setRows(5);
-        jScrollPane10.setViewportView(jTextArea6);
-
-        jCheckBox3.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        jCheckBox3.setText("otros");
-
-        jLabel21.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        jLabel21.setText("Fecha");
-
-        jLabel22.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        jLabel22.setText("Valor");
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(65, 65, 65)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel17)
-                        .addGap(113, 113, 113)
-                        .addComponent(jLabel18)
-                        .addGap(127, 127, 127)
-                        .addComponent(jLabel19)
-                        .addGap(97, 97, 97)
-                        .addComponent(jLabel20)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel16)
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(jLabel13)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(ListMaterialesCB2, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel21)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel22)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jCheckBox3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jCheckBox2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jScrollPane9, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jScrollPane10, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap(149, Short.MAX_VALUE))))
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(11, 11, 11)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(ListMaterialesCB2, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel21, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel22, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jCheckBox2)
-                        .addComponent(jCheckBox3)))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane10, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jScrollPane9, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(1749, Short.MAX_VALUE))
-        );
-
-        jTabbedPane1.addTab("Ingresos / Egresos", jPanel3);
 
         BAgregarClientes.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
         BAgregarClientes.setText("Agregar Persona");
@@ -700,7 +558,7 @@ public class MetalesDeSantander extends javax.swing.JFrame {
                     .addComponent(EditarCliente2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 480, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(1760, Short.MAX_VALUE))
+                .addContainerGap(1983, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Personas", jPanel6);
@@ -711,15 +569,15 @@ public class MetalesDeSantander extends javax.swing.JFrame {
         jLabel6.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
         jLabel6.setText("Valor");
 
-        Valor1.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        Valor1.addActionListener(new java.awt.event.ActionListener() {
+        Valor_dinero.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
+        Valor_dinero.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                Valor1ActionPerformed(evt);
+                Valor_dineroActionPerformed(evt);
             }
         });
-        Valor1.addKeyListener(new java.awt.event.KeyAdapter() {
+        Valor_dinero.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
-                Valor1KeyPressed(evt);
+                Valor_dineroKeyPressed(evt);
             }
         });
 
@@ -727,7 +585,7 @@ public class MetalesDeSantander extends javax.swing.JFrame {
         jLabel9.setText("Movimientos");
 
         jButton6.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        jButton6.setText("Agregar Tipo Gasto");
+        jButton6.setText("Agregar Tipo de Movimiento");
         jButton6.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton6ActionPerformed(evt);
@@ -743,9 +601,14 @@ public class MetalesDeSantander extends javax.swing.JFrame {
         });
 
         TipoMovimiento.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
+        TipoMovimiento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TipoMovimientoActionPerformed(evt);
+            }
+        });
 
         jButton9.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        jButton9.setText("Agregar PYG");
+        jButton9.setText("Agregar Movimiento");
         jButton9.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton9ActionPerformed(evt);
@@ -753,82 +616,99 @@ public class MetalesDeSantander extends javax.swing.JFrame {
         });
 
         EliminarTipoMovimiento.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        EliminarTipoMovimiento.setText("Eliminar Tipo Gasto");
+        EliminarTipoMovimiento.setText("Eliminar Tipo de Movimiento");
         EliminarTipoMovimiento.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 EliminarTipoMovimientoActionPerformed(evt);
             }
         });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        TablaCajaMenor.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(TablaCajaMenor);
+
+        TipoInforme.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
+        TipoInforme.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "General", "por movimiento", "por fechas" }));
+        TipoInforme.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TipoInformeActionPerformed(evt);
+            }
+        });
+
+        jButton10.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
+        jButton10.setText("Generar informe");
+        jButton10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton10ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1327, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 53, Short.MAX_VALUE))
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGap(556, 556, 556)
-                        .addComponent(jLabel9))
+                        .addComponent(Tipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, 0)
+                        .addComponent(TipoMovimiento, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, 0)
+                        .addComponent(jButton6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(EliminarTipoMovimiento))
                     .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(EliminarTipoMovimiento)
-                            .addGroup(jPanel5Layout.createSequentialGroup()
-                                .addComponent(jButton6)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(Tipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(TipoMovimiento, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(581, 581, 581)
+                        .addComponent(jLabel9))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1364, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(Descripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(Valor1, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(Valor_dinero, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jButton9)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(TipoInforme, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton10)))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton6)
-                    .addComponent(Tipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(TipoMovimiento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(EliminarTipoMovimiento)
+                        .addComponent(jButton6)
+                        .addComponent(Tipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(7, 7, 7)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(Descripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6)
-                    .addComponent(Valor1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(12, 12, 12)
-                .addComponent(EliminarTipoMovimiento)
-                .addGap(31, 31, 31)
+                    .addComponent(Valor_dinero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5)
+                    .addComponent(TipoInforme, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton10))
+                .addGap(16, 16, 16)
                 .addComponent(jLabel9)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(1709, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 466, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(69, 69, 69))
         );
 
-        jTabbedPane1.addTab("Caja menor", jPanel5);
+        jTabbedPane1.addTab("Ingresos y egreosos ", jPanel5);
 
         jButton2.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
         jButton2.setText("Registrar prestamo");
@@ -891,7 +771,7 @@ public class MetalesDeSantander extends javax.swing.JFrame {
                     .addComponent(jButton4))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 612, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(1612, Short.MAX_VALUE))
+                .addContainerGap(1835, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Prestamos", jPanel4);
@@ -1005,6 +885,14 @@ public class MetalesDeSantander extends javax.swing.JFrame {
         jLabel30.setForeground(new java.awt.Color(51, 51, 255));
         jLabel30.setText("Desde :");
 
+        jButton12.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
+        jButton12.setText("Informe General");
+        jButton12.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton12ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
         jPanel9.setLayout(jPanel9Layout);
         jPanel9Layout.setHorizontalGroup(
@@ -1056,8 +944,10 @@ public class MetalesDeSantander extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jLabel34)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(ListAños1, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 244, Short.MAX_VALUE)))
+                                .addComponent(ListAños1, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton12)))
+                        .addGap(0, 26, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel9Layout.setVerticalGroup(
@@ -1080,7 +970,8 @@ public class MetalesDeSantander extends javax.swing.JFrame {
                         .addComponent(jLabel33, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(ListMeses1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel34, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(ListAños1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(ListAños1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButton12, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel9Layout.createSequentialGroup()
                         .addGap(2, 2, 2)
@@ -1095,7 +986,7 @@ public class MetalesDeSantander extends javax.swing.JFrame {
                             .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 516, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(1676, Short.MAX_VALUE))
+                .addContainerGap(1898, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Inventario", jPanel9);
@@ -1108,7 +999,7 @@ public class MetalesDeSantander extends javax.swing.JFrame {
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 2287, Short.MAX_VALUE)
+            .addGap(0, 2510, Short.MAX_VALUE)
         );
 
         jTabbedPane1.addTab("Ayuda", jPanel7);
@@ -1177,93 +1068,51 @@ public class MetalesDeSantander extends javax.swing.JFrame {
         // TODO add your handling code here:
         listaProbedor = null;
         listaProbedor = conp.listaPersonas(selec());
-
     }//GEN-LAST:event_jTabbedPane1MouseClicked
 
-    private void EditarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EditarClienteActionPerformed
+    private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed
         // TODO add your handling code here:
-        EditarProveedor Editar = new EditarProveedor(listaProbedor.get(TClientes.getSelectedRow()).getId());
-        Editar.setVisible(true);
-    }//GEN-LAST:event_EditarClienteActionPerformed
+    }//GEN-LAST:event_jButton12ActionPerformed
 
-    private void BAgregarClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BAgregarClientesActionPerformed
+    private void ListAños1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ListAños1ActionPerformed
         // TODO add your handling code here:
-        RegistrarProveedor registro = new RegistrarProveedor(TClientes);
-        registro.setVisible(true);
-    }//GEN-LAST:event_BAgregarClientesActionPerformed
+    }//GEN-LAST:event_ListAños1ActionPerformed
 
-    private void ListMaterialesCB2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ListMaterialesCB2ActionPerformed
+    private void ListMeses1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ListMeses1ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_ListMaterialesCB2ActionPerformed
-    String listaTx = null;
-    int idselec = 0;
+    }//GEN-LAST:event_ListMeses1ActionPerformed
 
-
-    private void ListaClientesCuentaCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ListaClientesCuentaCBActionPerformed
-        try {
-            String[] cn = {"id", "fecha", "valor", "cuenta", "TipoCuenta"};
-            TCuentaXC.setModel(new DefaultTableModel(cn, 0));
-            TCuentaXC1.setModel(new DefaultTableModel(cn, 0));
-            CCuentas cunetaobjeto = new CCuentas();
-            String[] idString = ListaClientesCuentaCB.getSelectedItem().toString().split("-");
-            idselec = Integer.parseInt(idString[0]);
-            listaTx = conp.listaPresios_idpersonas(idselec);
-            Double Deuda = 0.0;
-            switch (tipo_Cuenta.getSelectedItem().toString()) {
-                case "Compra" -> {
-                    cunetaobjeto.lista_de_Cuentas_x_persona(Integer.parseInt(idString[0]), TCuentaXC1, 1);
-                    cunetaobjeto.lista_de_Cuentas_x_cobrar(Integer.parseInt(idString[0]), TCuentaXC, 0);
-                }
-                case "Venta" -> {
-                    cunetaobjeto.lista_de_Cuentas_x_persona(Integer.parseInt(idString[0]), TCuentaXC1, 2);
-                    cunetaobjeto.lista_de_Cuentas_x_cobrar(Integer.parseInt(idString[0]), TCuentaXC, 0);
-
-                }
-                default ->
-                    throw new AssertionError();
-            }
-            Deuda = cunetaobjeto.SumCuentasxd(Integer.parseInt(idString[0]));
-            DeudaLabel.setText(Deuda.toString());
-            if (Deuda > 0) {
-                DeudaLabel.setForeground(Color.GREEN);
-            } else {
-                DeudaLabel.setForeground(Color.RED);
-            }
-
-        } catch (Exception e) {
-        }
-    }//GEN-LAST:event_ListaClientesCuentaCBActionPerformed
-
-    private void ListaClientesCuentaCBMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ListaClientesCuentaCBMouseClicked
-
-    }//GEN-LAST:event_ListaClientesCuentaCBMouseClicked
-
-
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void ListDias1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ListDias1ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_ListDias1ActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void ListAñosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ListAñosActionPerformed
         // TODO add your handling code here:
-        RegistrarPrestamo ne = new RegistrarPrestamo(TPrestamos);
-        ne.setVisible(true);
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_ListAñosActionPerformed
 
-    private void TipoDePersonaComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TipoDePersonaComboBoxActionPerformed
+    private void ListMesesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ListMesesActionPerformed
         // TODO add your handling code here:
-        optenerListaProbedor(selec());
-        ListaClientesCuentaCB.removeAllItems();
-        for (persona object : listaProbedor) {
-            ListaClientesCuentaCB.addItem(object.getId() + "-" + object.getNombre());
-        }
-    }//GEN-LAST:event_TipoDePersonaComboBoxActionPerformed
+    }//GEN-LAST:event_ListMesesActionPerformed
 
-    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+    private void ListDiasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ListDiasActionPerformed
         // TODO add your handling code here:
+    }//GEN-LAST:event_ListDiasActionPerformed
 
-        FTipoMovimiento nwe = new FTipoMovimiento();
-        nwe.setVisible(true);
-    }//GEN-LAST:event_jButton6ActionPerformed
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        fechaAnterior = obtenerFechasinferior();
+        fechaActual = obtenerFechassuperir();
+        material = ListMaterialesInve.getSelectedItem().toString();
+        int idMaterialo = cc.obtenerIdMaterialPorNombre(material);
+        inve.obtenerSumaPesoYValorPorFechasYMaterial(fechaAnterior, fechaActual, idMaterialo, JTpeso, JTValor);
+        String[] va=  {"idInventario", "peso", "Descripcion", "idMaterial", "Valor", "fecha"};
+        TInventario.setModel(new DefaultTableModel(va,0 ));
+        ArrayList<Inventario> inventarioList = inve.obtenerMaterialesPorFechasXidMaterial(TInventario, fechaAnterior, fechaActual, idMaterialo);
+        InventarioReportGenerator ss = new InventarioReportGenerator();
+        // Generar el informe en PDF
+        Double peso = Double.parseDouble(JTpeso.getText());
+        Double valorTotal = Double.parseDouble(JTValor.getText());
+        ss.generateReport(peso, valorTotal, inventarioList, fechaAnterior, fechaActual, material, "Informe_" + fechaActual + ".pdf");
+    }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
@@ -1283,117 +1132,187 @@ public class MetalesDeSantander extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton4ActionPerformed
 
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        RegistrarPrestamo ne = new RegistrarPrestamo(TPrestamos);
+        ne.setVisible(true);
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
+        // TODO add your handling code here:
+        String tipoi=TipoInforme.getSelectedItem().toString();
+        CajaMenorReporteGenerator reporte =new CajaMenorReporteGenerator();
+        
+    }//GEN-LAST:event_jButton10ActionPerformed
+
+    private void TipoInformeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TipoInformeActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_TipoInformeActionPerformed
+
+    private void EliminarTipoMovimientoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EliminarTipoMovimientoActionPerformed
+        // TODO add your handling code here:
+        TipoMovimientoController nuevo = new TipoMovimientoController();
+        nuevo.eliminarTipoMovimientoPorNombre(TipoMovimiento.getSelectedItem().toString());
+    }//GEN-LAST:event_EliminarTipoMovimientoActionPerformed
+
+    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
+        // TODO add your handling code here:
+        String tipom = TipoMovimiento.getSelectedItem().toString();
+        String Descripcion = this.Descripcion.getText();
+        Double monto = Double.parseDouble(Valor_dinero.getText());
+        java.util.Date utilDate = new java.util.Date();
+        java.sql.Date fechaActual = new java.sql.Date(utilDate.getTime());
+        String Tipoget = Tipo.getSelectedItem().toString();
+        CajaMenorController cajamenorcontroller = new CajaMenorController();
+        TipoMovimientoController tipomovimientocontrolador = new TipoMovimientoController();
+        TipoMovimiento tipomode = tipomovimientocontrolador.obtenerTipoMovimientoPorNombre(tipom);
+        Boolean es_gasto=false;
+        if (tipom=="Ingresos") {
+            es_gasto=true;
+        }
+        MovimientoCajaMenor modelo = new MovimientoCajaMenor(fechaActual, tipomode.getId(), monto, Descripcion,es_gasto);
+        if (Tipoget == "Egresos") {
+            cajamenorcontroller.agregarMovimientoCajaMenor(modelo, false);
+        } else {
+            cajamenorcontroller.agregarMovimientoCajaMenor(modelo, true);
+        }
+        this.Descripcion.setText("");
+        this.Valor_dinero.setText("");
+        CajaMenorController caja = new CajaMenorController();
+        caja.obtenerMovimientosCajaMenortabla(TablaCajaMenor);
+    }//GEN-LAST:event_jButton9ActionPerformed
+
+    private void TipoMovimientoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TipoMovimientoActionPerformed
+        // TODO add your handling code here:
+        CajaMenorController caja =new CajaMenorController();
+        String nombre=TipoMovimiento.getSelectedItem().toString();
+        caja.obtenerMovimientosCajaMenortabla_x_nombre(TablaCajaMenor,nombre);
+    }//GEN-LAST:event_TipoMovimientoActionPerformed
+
+    private void TipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TipoActionPerformed
+        // TODO add your handling code here:
+        TipoMovimientoController nuevo = new TipoMovimientoController();
+        CajaMenorController caja = new CajaMenorController();
+        switch (Tipo.getSelectedItem().toString()) {
+            case "Ingreso":
+            String[] listaGastos = nuevo.obtenerTiposGastos2();
+            DefaultComboBoxModel cx = new DefaultComboBoxModel(listaGastos);
+            TipoMovimiento.setModel(cx);
+            caja.obtenerMovimientosCajaMenortablaIngresos(TablaCajaMenor);
+            break;
+
+            case "Egresos":
+            String[] listaIngresos = nuevo.obtenerTiposIngresos2();
+            DefaultComboBoxModel cc = new DefaultComboBoxModel(listaIngresos);
+            TipoMovimiento.setModel(cc);
+            caja.obtenerMovimientosCajaMenortablaEgresos(TablaCajaMenor);
+            break;
+            default:
+            throw new AssertionError();
+        }
+    }//GEN-LAST:event_TipoActionPerformed
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        // TODO add your handling code here:
+
+        FTipoMovimiento nwe = new FTipoMovimiento();
+        nwe.setVisible(true);
+    }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void Valor_dineroKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_Valor_dineroKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_Valor_dineroKeyPressed
+
+    private void Valor_dineroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Valor_dineroActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_Valor_dineroActionPerformed
+
     private void EditarCliente2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EditarCliente2ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_EditarCliente2ActionPerformed
 
-    private void CancelarCuentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CancelarCuentaActionPerformed
+    private void EditarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EditarClienteActionPerformed
         // TODO add your handling code here:
-        try {
-            DefaultTableModel modelo = (DefaultTableModel) TCuentaXC.getModel();
-            int i = TCuentaXC.getSelectedRow();
-            CCuentas nue = new CCuentas();
-            Boolean j = nue.modificarCuentaEstado(Integer.parseInt((String) modelo.getValueAt(i, 0)));
-            if (j) {
-                JOptionPane.showConfirmDialog(null, "Se a actualizado");
-            } else {
-                JOptionPane.showConfirmDialog(null, "no se a actualizado");
+        EditarProveedor Editar = new EditarProveedor(listaProbedor.get(TClientes.getSelectedRow()).getId());
+        Editar.setVisible(true);
+    }//GEN-LAST:event_EditarClienteActionPerformed
+
+    private void BAgregarClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BAgregarClientesActionPerformed
+        // TODO add your handling code here:
+        RegistrarProveedor registro = new RegistrarProveedor(TClientes);
+        registro.setVisible(true);
+    }//GEN-LAST:event_BAgregarClientesActionPerformed
+
+    private void BotonabonarCC2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonabonarCC2ActionPerformed
+        // TODO add your handling code here:
+        ArrayList<Pesada> listaPesadas = new ArrayList<>();
+        String cuenta = null;
+        int selectedRow = TCuentaXC.getSelectedRow(); // obtiene el número de fila seleccionado
+        Integer value = Integer.parseInt(TCuentaXC.getValueAt(selectedRow, 0).toString()); // obtiene el valor de la primera columna de la fila seleccionada
+        Double totalx = Double.parseDouble(TCuentaXC.getValueAt(selectedRow, 2).toString());
+        cuenta = TCuentaXC.getValueAt(selectedRow, 3).toString();
+        String[] pesadas = cuenta.split("\n");
+        for (String pesadaString : pesadas) {
+            JOptionPane.showConfirmDialog(null, pesadaString);
+            if (pesadaString.isEmpty()) {
+                continue; // Ignorar líneas vacías o la línea "el valor total"
             }
-        } catch (Exception e) {
-            JOptionPane.showConfirmDialog(null, "Nesesita seleccionar una cuenta");
+            if (pesadaString.startsWith("el valor total")) {
+                try {
+                    String[] cadena = pesadaString.split("_");
+
+                    String[] cadena1 = cadena[0].split("=");
+                    Double totalInicial = Double.parseDouble(cadena1[1]);
+                    facturaPdf.setTotalAnteriord(totalInicial);
+
+                    for (String parte : cadena) {
+                        if (parte.startsWith("el valor total")) {
+                            continue;
+                        }
+                        String[] partes = parte.split(", ");
+                        int id = Integer.parseInt(partes[0].split("=")[1]);
+                        String material = partes[1].split(" ")[1];
+                        double valor = Double.parseDouble(partes[1].split(" ")[3]);
+                        double pesada = Double.parseDouble(partes[1].split(" ")[5]);
+                        Pesada pesadaObj = new Pesada(id, material, pesada, valor);
+                        listaPesadas.add(pesadaObj);
+                    }
+                } catch (Exception e) {
+                    continue;
+                }
+                continue;
+            }
+            String[] partes = pesadaString.split(", ");
+            int id = Integer.parseInt(partes[0].split("=")[1]);
+            String material = partes[1].split(" ")[1];
+            double pesada = Double.parseDouble(partes[1].split(" ")[3]);
+            double valor = Double.parseDouble(partes[1].split(" ")[5]);
+            Pesada pesadaObj = new Pesada(id, material, pesada, valor);
+            listaPesadas.add(pesadaObj);
         }
 
-    }//GEN-LAST:event_CancelarCuentaActionPerformed
-
-    private void BotonabonarCCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonabonarCCActionPerformed
-        // TODO add your handling code here
         try {
-            DefaultTableModel modelo = (DefaultTableModel) TCuentaXC.getModel();
-            int i = TCuentaXC.getSelectedRow();
-            CCuentas nue = new CCuentas();
-            Integer valIN = Integer.parseInt(JOptionPane.showInputDialog("Digite el valor q desia abonar"));
-            JOptionPane.showConfirmDialog(null, modelo.getValueAt(i, 2));
-            Double valTB = Double.parseDouble((String) modelo.getValueAt(i, 2));
-            Double total = valTB - valIN;
-            String g = (String) modelo.getValueAt(i, 0);
-            Boolean j = nue.modificarCuentaValor(Integer.parseInt(g), total);
-            if (j) {
-                JOptionPane.showConfirmDialog(null, "Se a actualizado");
-            } else {
-                JOptionPane.showConfirmDialog(null, "no se a actualizado");
-            }
-        } catch (Exception e) {
-            JOptionPane.showConfirmDialog(null, "Nesesita seleccionar una cuenta");
+            pdf(true, value, totalx, listaPesadas);
+        } catch (SQLException ex) {
+            Logger.getLogger(MetalesDeSantander.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(MetalesDeSantander.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (DocumentException ex) {
+            Logger.getLogger(MetalesDeSantander.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }//GEN-LAST:event_BotonabonarCCActionPerformed
-    LocalDate FechaAnterior;
-    LocalDate FechaActual;
-    Filtros nueas;
-    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-        fechaAnterior = obtenerFechasinferior();
-        fechaActual = obtenerFechassuperir();
-        material = ListMaterialesInve.getSelectedItem().toString();
-        int idMaterialo = cc.obtenerIdMaterialPorNombre(material);
-        inve.obtenerSumaPesoYValorPorFechasYMaterial(fechaAnterior, fechaActual, idMaterialo, JTpeso, JTValor);
-        String[] va=  {"idInventario", "peso", "Descripcion", "idMaterial", "Valor", "fecha"};
-        TInventario.setModel(new DefaultTableModel(va,0 ));
-        ArrayList<Inventario> inventarioList = inve.obtenerMaterialesPorFechasXidMaterial(TInventario, fechaAnterior, fechaActual, idMaterialo);
-        InventarioReportGenerator ss = new InventarioReportGenerator();
-        // Generar el informe en PDF
-        ss.generateReport(inventarioList, fechaAnterior, fechaActual, material, "Informe_" + fechaActual + ".pdf");
+    }//GEN-LAST:event_BotonabonarCC2ActionPerformed
 
-        System.out.println("Informe generado correctamente.");
-    }//GEN-LAST:event_jButton7ActionPerformed
-
-    private void ListDiasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ListDiasActionPerformed
+    private void tipo_CuentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipo_CuentaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_ListDiasActionPerformed
+    }//GEN-LAST:event_tipo_CuentaActionPerformed
 
-    private void ListMesesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ListMesesActionPerformed
+    private void tipo_CuentaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tipo_CuentaMouseClicked
         // TODO add your handling code here:
-    }//GEN-LAST:event_ListMesesActionPerformed
-
-    private void ListAñosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ListAñosActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_ListAñosActionPerformed
-
-    private void ListDias1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ListDias1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_ListDias1ActionPerformed
-
-    private void ListMeses1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ListMeses1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_ListMeses1ActionPerformed
-
-    private void ListAños1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ListAños1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_ListAños1ActionPerformed
-
-    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
-        // TODO add your handling code here:
-        Cuentas vv = new Cuentas(TipoDePersonaComboBox.getSelectedItem().toString());
-        vv.setVisible(true);
-    }//GEN-LAST:event_jButton8ActionPerformed
-    public void pdf(Integer idfac, Double total, ArrayList<Pesada> pesadasx) throws SQLException, IOException, DocumentException {
-        FacturaPdf facturaPdf = null;
-        String fac = (String) ListaClientesCuentaCB.getSelectedItem();
-        String[] fac2 = fac.split("-");
-
-        Integer numeroidpersona = Integer.parseInt(fac2[0]);
-        conp = new CPersona();
-        persona pepe = conp.Leerpersonas(numeroidpersona);
-        String nombreArchivo = "factura de " + pepe.getNombre() + ".pdf";
-        String cliente = pepe.getNombre();
-        String direccion = pepe.getDescripcion();
-        LocalDate fechaActual = LocalDate.now();
-        DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd 'de' MMMM 'de' yyyy", new Locale("es", "ES"));
-        String fecha = fechaActual.format(formatoFecha);
-        double importe = Double.parseDouble(total.toString());
-        Double kilos = 4.0;
-        facturaPdf = new FacturaPdf();
-        facturaPdf.generarFacturaPdf(nombreArchivo, tipo_Cuenta.getSelectedItem().toString(), idfac, cliente, direccion, fecha, pesadasx, importe, kilos);
-        pesadasx = null;
-    }
+    }//GEN-LAST:event_tipo_CuentaMouseClicked
 
     private void BotonabonarCC1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonabonarCC1ActionPerformed
         // TODO add your handling code here:
@@ -1418,7 +1337,7 @@ public class MetalesDeSantander extends javax.swing.JFrame {
         }
 
         try {
-            pdf(value, totalx, listaPesadas);
+            pdf(true, value, totalx, listaPesadas);
         } catch (SQLException ex) {
             Logger.getLogger(MetalesDeSantander.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -1426,89 +1345,136 @@ public class MetalesDeSantander extends javax.swing.JFrame {
         } catch (DocumentException ex) {
             Logger.getLogger(MetalesDeSantander.class.getName()).log(Level.SEVERE, null, ex);
         }
-
 
     }//GEN-LAST:event_BotonabonarCC1ActionPerformed
 
-    private void tipo_CuentaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tipo_CuentaMouseClicked
+    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_tipo_CuentaMouseClicked
+        Cuentas vv = new Cuentas(TipoDePersonaComboBox.getSelectedItem().toString());
+        vv.setVisible(true);
+    }//GEN-LAST:event_jButton8ActionPerformed
 
-    private void tipo_CuentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipo_CuentaActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tipo_CuentaActionPerformed
-
-    private void BotonabonarCC2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonabonarCC2ActionPerformed
-        // TODO add your handling code here:
-        ArrayList<Pesada> listaPesadas = new ArrayList<>();
-        String cuenta = null;
-        int selectedRow = TCuentaXC.getSelectedRow(); // obtiene el número de fila seleccionado
-        Integer value = Integer.parseInt(TCuentaXC.getValueAt(selectedRow, 0).toString()); // obtiene el valor de la primera columna de la fila seleccionada
-        Double totalx = Double.parseDouble(TCuentaXC.getValueAt(selectedRow, 2).toString());
-        cuenta = TCuentaXC.getValueAt(selectedRow, 3).toString();
-        String[] pesadas = cuenta.split("\n");
-        for (String pesadaString : pesadas) {
-            if (pesadaString.isEmpty() || pesadaString.startsWith("el valor total")) {
-                continue; // Ignorar líneas vacías o la línea "el valor total"
-            }
-            String[] partes = pesadaString.split(", ");
-            int id = Integer.parseInt(partes[0].split("=")[1]);
-            String material = partes[1].split(" ")[1];
-            double pesada = Double.parseDouble(partes[1].split(" ")[3]);
-            double valor = Double.parseDouble(partes[1].split(" ")[5]);
-            Pesada pesadaObj = new Pesada(id, material, pesada, valor);
-            listaPesadas.add(pesadaObj);
-        }
-
+    private void BotonabonarCCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonabonarCCActionPerformed
+        // TODO add your handling code here
         try {
-            pdf(value, totalx, listaPesadas);
-        } catch (SQLException ex) {
-            Logger.getLogger(MetalesDeSantander.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(MetalesDeSantander.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (DocumentException ex) {
-            Logger.getLogger(MetalesDeSantander.class.getName()).log(Level.SEVERE, null, ex);
+            DefaultTableModel modelo = (DefaultTableModel) TCuentaXC.getModel();
+            int i = TCuentaXC.getSelectedRow();
+            CCuentas nue = new CCuentas();
+            Integer valIN = Integer.parseInt(JOptionPane.showInputDialog("Digite el valor q desia abonar"));
+            JOptionPane.showConfirmDialog(null, modelo.getValueAt(i, 2));
+            Double valTB = Double.parseDouble((String) modelo.getValueAt(i, 2));
+            Double total = valTB - valIN;
+            String g = (String) modelo.getValueAt(i, 0);
+            String cadena = "_id=-1,  Abono  " + valIN + " X 1 = " + total;
+            Boolean j = nue.modificarCuentaValor(Integer.parseInt(g), total, cadena);
+            if (j) {
+                JOptionPane.showConfirmDialog(null, "Se a actualizado");
+            } else {
+                JOptionPane.showConfirmDialog(null, "no se a actualizado");
+            }
+            String[] cn = {"id", "fecha", "valor", "cuenta", "TipoCuenta"};
+            TCuentaXC.setModel(new DefaultTableModel(cn, 0));
+            String[] idString = ListaClientesCuentaCB.getSelectedItem().toString().split("-");
+            CCuentas cunetaobjeto = new CCuentas();
+            cunetaobjeto.lista_de_Cuentas_x_cobrar(Integer.parseInt(idString[0]), TCuentaXC, 0);
+        } catch (Exception e) {
+            JOptionPane.showConfirmDialog(null, "Nesesita seleccionar una cuenta");
         }
-    }//GEN-LAST:event_BotonabonarCC2ActionPerformed
+    }//GEN-LAST:event_BotonabonarCCActionPerformed
 
-    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
+    private void CancelarCuentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CancelarCuentaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton9ActionPerformed
+        try {
+            DefaultTableModel modelo = (DefaultTableModel) TCuentaXC.getModel();
+            int i = TCuentaXC.getSelectedRow();
+            CCuentas nue = new CCuentas();
+            Boolean j = nue.modificarCuentaEstado(Integer.parseInt((String) modelo.getValueAt(i, 0)));
+            if (j) {
+                JOptionPane.showConfirmDialog(null, "Se a actualizado");
+            } else {
+                JOptionPane.showConfirmDialog(null, "no se a actualizado");
+            }
+        } catch (Exception e) {
+            JOptionPane.showConfirmDialog(null, "Nesesita seleccionar una cuenta");
+        }
+    }//GEN-LAST:event_CancelarCuentaActionPerformed
 
-    private void EliminarTipoMovimientoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EliminarTipoMovimientoActionPerformed
+    private void TipoDePersonaComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TipoDePersonaComboBoxActionPerformed
         // TODO add your handling code here:
-        TipoMovimientoController nuevo = new TipoMovimientoController();
-        nuevo.eliminarTipoMovimientoPorNombre(TipoMovimiento.getSelectedItem().toString());
-    }//GEN-LAST:event_EliminarTipoMovimientoActionPerformed
+        optenerListaProbedor(selec());
+        ListaClientesCuentaCB.removeAllItems();
+        for (persona object : listaProbedor) {
+            ListaClientesCuentaCB.addItem(object.getId() + "-" + object.getNombre());
+        }
+    }//GEN-LAST:event_TipoDePersonaComboBoxActionPerformed
 
-    private void TipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TipoActionPerformed
-        // TODO add your handling code here:
-        TipoMovimientoController nuevo = new TipoMovimientoController();
-        switch (Tipo.getSelectedItem().toString()) {
-            case "Ingreso":
-                String[] listaGastos = nuevo.obtenerTiposGastos2();
-                DefaultComboBoxModel cx = new DefaultComboBoxModel(listaGastos);
-                TipoMovimiento.setModel(cx);
-                break;
-            case "Egresos":
-                String[] listaIngresos = nuevo.obtenerTiposIngresos2();
-                DefaultComboBoxModel cc = new DefaultComboBoxModel(listaIngresos);
-                TipoMovimiento.setModel(cc);
-                break;
-            default:
+    private void ListaClientesCuentaCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ListaClientesCuentaCBActionPerformed
+        try {
+            String[] cn = {"id", "fecha", "valor", "cuenta", "TipoCuenta"};
+            TCuentaXC.setModel(new DefaultTableModel(cn, 0));
+            TCuentaXC1.setModel(new DefaultTableModel(cn, 0));
+            CCuentas cunetaobjeto = new CCuentas();
+            String[] idString = ListaClientesCuentaCB.getSelectedItem().toString().split("-");
+            idselec = Integer.parseInt(idString[0]);
+            listaTx = conp.listaPresios_idpersonas(idselec);
+            Double Deuda = 0.0;
+            switch (tipo_Cuenta.getSelectedItem().toString()) {
+                case "Compra" -> {
+                    cunetaobjeto.lista_de_Cuentas_x_persona(Integer.parseInt(idString[0]), TCuentaXC1, 1);
+                    cunetaobjeto.lista_de_Cuentas_x_cobrar(Integer.parseInt(idString[0]), TCuentaXC, 0);
+                }
+                case "Venta" -> {
+                    cunetaobjeto.lista_de_Cuentas_x_persona(Integer.parseInt(idString[0]), TCuentaXC1, 2);
+                    cunetaobjeto.lista_de_Cuentas_x_cobrar(Integer.parseInt(idString[0]), TCuentaXC, 0);
+
+                }
+                default ->
                 throw new AssertionError();
+            }
+            Deuda = cunetaobjeto.SumCuentasxd(Integer.parseInt(idString[0]));
+            DeudaLabel.setText(Deuda.toString());
+            if (Deuda > 0) {
+                DeudaLabel.setForeground(Color.GREEN);
+            } else {
+                DeudaLabel.setForeground(Color.RED);
+            }
+
+        } catch (Exception e) {
         }
-    }//GEN-LAST:event_TipoActionPerformed
+    }//GEN-LAST:event_ListaClientesCuentaCBActionPerformed
 
-    private void Valor1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_Valor1KeyPressed
-        // TODO add your handling code here:
+    private void ListaClientesCuentaCBMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ListaClientesCuentaCBMouseClicked
 
-    }//GEN-LAST:event_Valor1KeyPressed
+    }//GEN-LAST:event_ListaClientesCuentaCBMouseClicked
+    String listaTx = null;
+    int idselec = 0;
 
-    private void Valor1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Valor1ActionPerformed
-        // TODO add your handling code here:
 
-    }//GEN-LAST:event_Valor1ActionPerformed
+    LocalDate FechaAnterior;
+    LocalDate FechaActual;
+    Filtros nueas;    FacturaPdf facturaPdf = new FacturaPdf();
+
+    ;
+    public void pdf(Boolean es_impresion, Integer idfac, Double total, ArrayList<Pesada> pesadasx) throws SQLException, IOException, DocumentException {
+
+        String fac = (String) ListaClientesCuentaCB.getSelectedItem();
+        String[] fac2 = fac.split("-");
+
+        Integer numeroidpersona = Integer.parseInt(fac2[0]);
+        conp = new CPersona();
+        persona pepe = conp.Leerpersonas(numeroidpersona);
+        String nombreArchivo = "factura de " + pepe.getNombre() + ".pdf";
+        String cliente = pepe.getNombre();
+        String direccion = pepe.getDescripcion();
+        LocalDate fechaActual = LocalDate.now();
+        DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd 'de' MMMM 'de' yyyy", new Locale("es", "ES"));
+        String fecha = fechaActual.format(formatoFecha);
+        double importe = Double.parseDouble(total.toString());
+        Double kilos = 4.0;
+
+        facturaPdf.generarFacturaPdf(es_impresion, nombreArchivo, tipo_Cuenta.getSelectedItem().toString(), idfac, cliente, direccion, fecha, pesadasx, importe, kilos);
+        pesadasx = null;
+    }
     Double ValorTotal = 0.0;
     ArrayList<Cuenta> listaCuenta;
     ArrayList<Cuenta> listaCuenta2;
@@ -1538,6 +1504,7 @@ public class MetalesDeSantander extends javax.swing.JFrame {
     private javax.swing.JButton BotonabonarCC1;
     private javax.swing.JButton BotonabonarCC2;
     private javax.swing.JButton CancelarCuenta;
+    private javax.swing.JTextField Descripcion;
     private javax.swing.JLabel DeudaLabel;
     private javax.swing.JButton EditarCliente;
     private javax.swing.JButton EditarCliente2;
@@ -1548,7 +1515,6 @@ public class MetalesDeSantander extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> ListAños1;
     private javax.swing.JComboBox<String> ListDias;
     private javax.swing.JComboBox<String> ListDias1;
-    private javax.swing.JComboBox<String> ListMaterialesCB2;
     private javax.swing.JComboBox<String> ListMaterialesInve;
     private javax.swing.JComboBox<String> ListMeses;
     private javax.swing.JComboBox<String> ListMeses1;
@@ -1558,32 +1524,25 @@ public class MetalesDeSantander extends javax.swing.JFrame {
     private javax.swing.JTable TCuentaXC1;
     private javax.swing.JTable TInventario;
     private javax.swing.JTable TPrestamos;
+    private javax.swing.JTable TablaCajaMenor;
     private javax.swing.JComboBox<String> Tipo;
     private javax.swing.JComboBox<String> TipoDePersonaComboBox;
+    private javax.swing.JComboBox<String> TipoInforme;
     private javax.swing.JComboBox<String> TipoMovimiento;
-    private javax.swing.JTextField Valor1;
+    private javax.swing.JTextField Valor_dinero;
+    private javax.swing.JButton jButton10;
+    private javax.swing.JButton jButton12;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
-    private javax.swing.JCheckBox jCheckBox2;
-    private javax.swing.JCheckBox jCheckBox3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel17;
-    private javax.swing.JLabel jLabel18;
-    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel20;
-    private javax.swing.JLabel jLabel21;
-    private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel27;
@@ -1601,31 +1560,18 @@ public class MetalesDeSantander extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane10;
     private javax.swing.JScrollPane jScrollPane12;
     private javax.swing.JScrollPane jScrollPane13;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JScrollPane jScrollPane6;
-    private javax.swing.JScrollPane jScrollPane8;
-    private javax.swing.JScrollPane jScrollPane9;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextArea jTextArea2;
-    private javax.swing.JTextArea jTextArea4;
-    private javax.swing.JTextArea jTextArea5;
-    private javax.swing.JTextArea jTextArea6;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
     private javax.swing.JComboBox<String> tipo_Cuenta;
     // End of variables declaration//GEN-END:variables
 }

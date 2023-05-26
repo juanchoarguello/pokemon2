@@ -449,7 +449,7 @@ public class Cuentas extends javax.swing.JFrame {
         double importe = Double.parseDouble(total.toString());
         Double kilos = 4.0;
         FacturaPdf facturaPdf = new FacturaPdf();
-        facturaPdf.generarFacturaPdf(nombreArchivo, tipo_compra.getSelectedItem().toString(), idfac, cliente, direccion, fecha, pesadas, importe, kilos);
+        facturaPdf.generarFacturaPdf(false,nombreArchivo, tipo_compra.getSelectedItem().toString(), idfac, cliente, direccion, fecha, pesadas, importe, kilos);
     }
 
 

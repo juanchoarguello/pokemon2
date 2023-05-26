@@ -6,41 +6,29 @@ package com.contabilidadmetales.contabilidadmetales;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import javax.swing.JOptionPane;
+import java.sql.SQLException;
 
-/**
- *
- * @author narut
- */
 public class CConexion {
-    Connection conectar;
-    
-    String usuario="root";
-    String contrasenia="2546";
-    String bd="metalesdb";
-    String ip="localhost";
-    String puerto="3306";
-    
-    String cadena = "jdbc:mysql://"+ip+":"+puerto+"/"+bd;
-    
-    public Connection estableceConexion(){
-    
+
+    public Connection estableceConexion() {
+        Connection connection = null;
+
         try {
-            
-            Class.forName("com.mysql.jdbc.Driver");
-            conectar = DriverManager.getConnection(cadena,usuario,contrasenia);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null,"Problemas en la conexion"+ e.toString());
+            // Cargar el controlador JDBC
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            // Establecer la conexión con la base de datos
+            String url = "jdbc:mysql://localhost:3306/metalesdb";
+            String usuario = "root";
+            String contraseña = "2546";
+            connection = DriverManager.getConnection(url, usuario, contraseña);
+
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return conectar;
-    }
 
-    public PreparedStatement prepareStatement(String sql) {
-       throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-        
+        return connection;
     }
-    
-    
 }
-

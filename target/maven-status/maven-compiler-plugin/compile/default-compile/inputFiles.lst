@@ -1,3 +1,4 @@
+C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\InventarioReportGenerator.java
 C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\modelo\Material.java
 C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\ContabilidadMetales.java
 C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\vistas\Cuentas.java
@@ -6,6 +7,7 @@ C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main
 C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\CConexion.java
 C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\vistas\Filtros.java
 C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\FacturaPdf.java
+C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\controlador\CajaMenorController.java
 C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\controlador\CPersona.java
 C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\vistas\MetalesDeSantander.java
 C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\controlador\CCuentas.java
@@ -16,11 +18,11 @@ C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main
 C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\vistas\FormLogin.java
 C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\controlador\TipoMovimientoController.java
 C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\vistas\FTipoMovimiento.java
-C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\modelo\Usuario.java
 C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\modelo\Pesada.java
 C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\vistas\ActualizarListaPrecios.java
 C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\modelo\Inventario.java
-C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\modelo\cliente.java
+C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\modelo\MovimientoCajaMenor.java
+C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\CajaMenorReporteGenerator.java
 C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\modelo\Prestamos.java
 C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\modelo\TipoMovimiento.java
 C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\controlador\CPrestamos.java
