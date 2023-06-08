@@ -14,7 +14,6 @@ import com.contabilidadmetales.contabilidadmetales.modelo.Pesada;
 import com.contabilidadmetales.contabilidadmetales.modelo.persona;
 import com.itextpdf.text.DocumentException;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -27,6 +26,21 @@ import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import javax.print.Doc;
+import javax.print.DocFlavor;
+import javax.print.DocPrintJob;
+import javax.print.PrintException;
+import javax.print.PrintService;
+import javax.print.PrintServiceLookup;
+import javax.print.SimpleDoc;
+import javax.print.attribute.HashPrintRequestAttributeSet;
+import javax.print.attribute.PrintRequestAttributeSet;
 
 public class Cuentas extends javax.swing.JFrame {
 
@@ -35,6 +49,7 @@ public class Cuentas extends javax.swing.JFrame {
     ArrayList<persona> ListaPersonas;
     CPersona objetopersona;
     int tipo = 0;
+
     public void getTipo(String TipoPersona) {
         ListaPersonas = null;
         objetopersona = null;
@@ -55,6 +70,63 @@ public class Cuentas extends javax.swing.JFrame {
         }
         ComboBoxModel<String> aModel = new DefaultComboBoxModel<>(items);
         ListaXclienteCB.setModel(aModel);
+    }
+
+    public void ImprimirImpresoraTextoPlano(String fileName,Double total) throws IOException {
+
+        String filePath = fileName + ".txt";
+        String titulo = "Metales de santander\n\n" + "numero de cuenta: " + fileName + "\n\n";
+        String pesadastx = "";
+        for (Pesada pesada : pesadas) {
+            pesadastx = pesadastx + pesada.toString2() + "\n";
+        }
+
+        // Crear y escribir en el archivo de texto
+        try {
+            FileWriter fileWriter = new FileWriter(filePath);
+            fileWriter.write(titulo + pesadastx+"Total Cuenta = "+total);
+            fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Leer el archivo de texto
+        StringBuilder content = new StringBuilder();
+        try ( BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                content.append(line).append(System.lineSeparator());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Obtener las impresoras disponibles
+        PrintService[] printServices = PrintServiceLookup.lookupPrintServices(null, null);
+
+        // Verificar si hay impresoras disponibles
+        if (printServices.length > 0) {
+            // Imprimir el archivo de texto
+            try {
+                // Crear el documento a imprimir
+                // Crear el documento a imprimir
+                DocFlavor flavor = DocFlavor.INPUT_STREAM.AUTOSENSE;
+                InputStream inputStream = new ByteArrayInputStream(content.toString().getBytes());
+                Doc doc = new SimpleDoc(inputStream, flavor, null);
+
+                // Configurar la impresión
+                PrintRequestAttributeSet attributeSet = new HashPrintRequestAttributeSet();
+                PrintService printService = PrintServiceLookup.lookupDefaultPrintService();
+                DocPrintJob printJob = printService.createPrintJob();
+
+                // Enviar el documento a imprimir
+                printJob.print(doc, attributeSet);
+            } catch (PrintException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("No se encontraron impresoras disponibles.");
+        }
     }
 
     public Cuentas(String TipoPersona) {
@@ -367,7 +439,7 @@ public class Cuentas extends javax.swing.JFrame {
         TextPesada.setText("");
         total = total + nuevaPesada.getTotal();
         ValorTotalLabel.setText(total.toString());
-        
+
     }//GEN-LAST:event_BAgregarActionPerformed
 
     private void BotonTerminarCuentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonTerminarCuentaActionPerformed
@@ -431,6 +503,14 @@ public class Cuentas extends javax.swing.JFrame {
         } catch (DocumentException ex) {
             Logger.getLogger(Cuentas.class.getName()).log(Level.SEVERE, null, ex);
         }
+        String nombreCuenta = "Cuenta" + idcuenta;
+        try {
+
+            ImprimirImpresoraTextoPlano(nombreCuenta,total);
+        } catch (IOException ex) {
+            Logger.getLogger(Cuentas.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         this.dispose();
     }//GEN-LAST:event_BotonTerminarCuentaActionPerformed
 
@@ -440,16 +520,18 @@ public class Cuentas extends javax.swing.JFrame {
         Integer numeroidpersona = Integer.parseInt(fac2[0]);
         objetopersona = new CPersona();
         persona pepe = objetopersona.Leerpersonas(numeroidpersona);
-        String nombreArchivo = "factura de " + pepe.getNombre() + ".pdf";
+
         String cliente = pepe.getNombre();
         String direccion = pepe.getDescripcion();
         LocalDate fechaActual = LocalDate.now();
         DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd 'de' MMMM 'de' yyyy", new Locale("es", "ES"));
         String fecha = fechaActual.format(formatoFecha);
+        String nombreArchivo = "factura de " + pepe.getNombre() + idfac + ".pdf";
         double importe = Double.parseDouble(total.toString());
         Double kilos = 4.0;
         FacturaPdf facturaPdf = new FacturaPdf();
-        facturaPdf.generarFacturaPdf(false,nombreArchivo, tipo_compra.getSelectedItem().toString(), idfac, cliente, direccion, fecha, pesadas, importe, kilos);
+        facturaPdf.generarFacturaPdf(false, nombreArchivo, tipo_compra.getSelectedItem().toString(), idfac, cliente, direccion, fecha, pesadas, importe, kilos);
+
     }
 
 

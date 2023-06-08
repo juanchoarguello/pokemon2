@@ -10,8 +10,9 @@ import java.sql.SQLException;
 
 public class CConexion {
 
+    private Connection connection;
+
     public Connection estableceConexion() {
-        Connection connection = null;
 
         try {
             // Cargar el controlador JDBC

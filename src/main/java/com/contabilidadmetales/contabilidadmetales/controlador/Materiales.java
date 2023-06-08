@@ -12,8 +12,9 @@ import java.util.List;
 public class Materiales {
 
     // Método para conectarse a la base de datos
+    private  CConexion objetoConexion;
     private Connection conectar() {
-        CConexion objetoConexion = new CConexion();
+        objetoConexion= new CConexion();
         return objetoConexion.estableceConexion();
     }
 

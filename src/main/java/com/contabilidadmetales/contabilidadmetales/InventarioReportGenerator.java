@@ -22,8 +22,10 @@ import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import org.jfree.chart.ChartUtils;
 
 
@@ -175,4 +177,8 @@ public class InventarioReportGenerator {
     }
 
 // ...
+
+    public void generateReport(Double peso, Double valorTotal, ArrayList<Inventario> inventarioList, Date fechaAnterior, Date fechaActual, String material, String string) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

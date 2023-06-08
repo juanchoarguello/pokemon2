@@ -4,9 +4,11 @@
  */
 package com.contabilidadmetales.contabilidadmetales.vistas;
 
+import PlaceHolder.PlaceHolder;
 import com.contabilidadmetales.contabilidadmetales.controlador.TipoMovimientoController;
 import com.contabilidadmetales.contabilidadmetales.modelo.TipoMovimiento;
 import java.awt.HeadlessException;
+import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 
@@ -21,8 +23,38 @@ public class FTipoMovimiento extends javax.swing.JFrame {
      */
     public FTipoMovimiento() {
         initComponents();
+         this.setLocationRelativeTo(this);//para q se ponga en el centro
         this.setDefaultCloseOperation(this.DISPOSE_ON_CLOSE);
+           int ancho = java.awt.Toolkit.getDefaultToolkit().getScreenSize().width;
+        int alto = java.awt.Toolkit.getDefaultToolkit().getScreenSize().height;//consigo el ancho y alto de la pantalla
+
+    
+           
+        AsignacionPlaceHolder_Jtext();
+        AsignacionImagenes();
     }
+    
+     public void AsignacionPlaceHolder_Jtext(){
+     PlaceHolder placeholder = new PlaceHolder("Ingrese su descripción", DescripcionTx);//aqui le asigon l oq se vera en el text q se borra al escribir
+
+    
+    }
+    
+     public void AsignacionImagenes(){
+    ImageIcon icon = new ImageIcon("Imagenes/FTipoMovimiento/Guardar.png");
+jMenuGuardar.setIcon(icon);
+
+     icon = new ImageIcon("Imagenes/FTipoMovimiento/Guardar2.png");
+jMenuGuardar.setRolloverIcon(icon);
+
+   icon = new ImageIcon("Imagenes/FTipoMovimiento/Cancelar.png");
+jMenuCancelar.setIcon(icon);
+
+icon = new ImageIcon("Imagenes/FTipoMovimiento/favicon.png");
+jLabelIcono.setIcon(icon);
+
+    }
+    
     Boolean Actualizar = false;
 
     public FTipoMovimiento(JTextField DescripcionTx, JComboBox<String> TipoMovimiento) throws HeadlessException {
@@ -39,80 +71,120 @@ public class FTipoMovimiento extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         TipoMovimiento = new javax.swing.JComboBox<>();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
         DescripcionTx = new javax.swing.JTextField();
+        jSeparator2 = new javax.swing.JSeparator();
+        jLabel2 = new javax.swing.JLabel();
+        jLabelIcono = new javax.swing.JLabel();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenuGuardar = new javax.swing.JMenu();
+        jMenuCancelar = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel1.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        jLabel1.setText("Decripcion :");
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
-        TipoMovimiento.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
+        jLabel1.setText("DESCRIPCIÓN");
+
+        TipoMovimiento.setFont(new java.awt.Font("Arial", 2, 18)); // NOI18N
         TipoMovimiento.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ingreso", "Egreso" }));
+        TipoMovimiento.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
-        jButton1.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        jButton1.setText("Guardar");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        DescripcionTx.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        DescripcionTx.setBorder(null);
+        DescripcionTx.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                DescripcionTxActionPerformed(evt);
             }
         });
 
-        jButton2.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        jButton2.setText("Cancelar");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+        jLabel2.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
+        jLabel2.setText("OPCIÓN DE MOVIMIENTO");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(6, 6, 6)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(4, 4, 4)
+                        .addComponent(jLabelIcono, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel1)
+                    .addComponent(DescripcionTx, javax.swing.GroupLayout.DEFAULT_SIZE, 537, Short.MAX_VALUE)
+                    .addComponent(jSeparator2)
+                    .addComponent(jLabel2)
+                    .addComponent(TipoMovimiento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabelIcono, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(32, 32, 32)
+                        .addComponent(jLabel1)))
+                .addGap(6, 6, 6)
+                .addComponent(DescripcionTx, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(2, 2, 2)
+                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(23, 23, 23)
+                .addComponent(jLabel2)
+                .addGap(12, 12, 12)
+                .addComponent(TipoMovimiento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(55, Short.MAX_VALUE))
+        );
+
+        jMenuBar1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+
+        jMenuGuardar.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
+        jMenuGuardar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jMenuGuardar.addMenuListener(new javax.swing.event.MenuListener() {
+            public void menuCanceled(javax.swing.event.MenuEvent evt) {
+            }
+            public void menuDeselected(javax.swing.event.MenuEvent evt) {
+            }
+            public void menuSelected(javax.swing.event.MenuEvent evt) {
+                jMenuGuardarMenuSelected(evt);
             }
         });
+        jMenuBar1.add(jMenuGuardar);
 
-        DescripcionTx.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
-        DescripcionTx.setText("                                   ");
+        jMenuCancelar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jMenuCancelar.addMenuListener(new javax.swing.event.MenuListener() {
+            public void menuCanceled(javax.swing.event.MenuEvent evt) {
+            }
+            public void menuDeselected(javax.swing.event.MenuEvent evt) {
+            }
+            public void menuSelected(javax.swing.event.MenuEvent evt) {
+                jMenuCancelarMenuSelected(evt);
+            }
+        });
+        jMenuBar1.add(jMenuCancelar);
+
+        setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(61, 61, 61)
-                        .addComponent(jButton1)
-                        .addGap(39, 39, 39)
-                        .addComponent(jButton2))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(33, 33, 33)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(TipoMovimiento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(DescripcionTx, javax.swing.GroupLayout.PREFERRED_SIZE, 207, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(39, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(TipoMovimiento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(DescripcionTx, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
-                .addGap(29, 29, 29))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+    private void jMenuGuardarMenuSelected(javax.swing.event.MenuEvent evt) {//GEN-FIRST:event_jMenuGuardarMenuSelected
+     // TODO add your handling code here:
         String descripcion = DescripcionTx.getText();
         Boolean is = null;
         switch (TipoMovimiento.getSelectedItem().toString()) {
@@ -128,20 +200,28 @@ public class FTipoMovimiento extends javax.swing.JFrame {
         TipoMovimiento movimi = new TipoMovimiento(descripcion, is);
         TipoMovimientoController nuev = new TipoMovimientoController();
         nuev.agregarTipoMovimiento(movimi);
-        this.dispose();
-    }//GEN-LAST:event_jButton1ActionPerformed
+        this.dispose();     
+    }//GEN-LAST:event_jMenuGuardarMenuSelected
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void jMenuCancelarMenuSelected(javax.swing.event.MenuEvent evt) {//GEN-FIRST:event_jMenuCancelarMenuSelected
+      this.dispose();
+    }//GEN-LAST:event_jMenuCancelarMenuSelected
+
+    private void DescripcionTxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DescripcionTxActionPerformed
         // TODO add your handling code here:
-        this.dispose();
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_DescripcionTxActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField DescripcionTx;
     private javax.swing.JComboBox<String> TipoMovimiento;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    public javax.swing.JLabel jLabelIcono;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenu jMenuCancelar;
+    private javax.swing.JMenu jMenuGuardar;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JSeparator jSeparator2;
     // End of variables declaration//GEN-END:variables
 }

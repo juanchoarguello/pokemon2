@@ -16,12 +16,12 @@ import javax.swing.JOptionPane;
  * @author blood
  */
 public class CLogin {
-
+    private CConexion objetoConexion ;
     public void validaUsuario(String usuario, String contrasenia,JFrame j) {
         try {
             ResultSet rs = null;
             PreparedStatement ps = null;
-            CConexion objetoConexion = new CConexion();
+            objetoConexion= new CConexion();
             String consulta = "select * from personas where personas.nombre =(?) and personas.password=(?) and personas.IdTP=3 ;";
             ps = objetoConexion.estableceConexion().prepareStatement(consulta);
             String contra = String.valueOf(contrasenia);

@@ -123,10 +123,10 @@ public class ActualizarListaPrecios extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+CPersona ca ;
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        CPersona ca = new CPersona();
+        ca= new CPersona();
         String as=Lista.getText();
         String[] lineas = as.split("\n");
         as = String.join(" ", lineas);
