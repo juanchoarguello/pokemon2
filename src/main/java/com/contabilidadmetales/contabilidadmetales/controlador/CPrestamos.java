@@ -24,12 +24,13 @@ public class CPrestamos {
 
     //SELECT idpersonas FROM personas where nombre="asd"
     int Id_Tipo_Persona;
+    private CConexion objetoConexion;
 
     public int Leer_id_X_por_nombre(String Nombre) {
         int PR = 0;
         try {
             Statement ps = null;
-            CConexion objetoConexion = new CConexion();
+            objetoConexion = new CConexion();
             String sql = "SELECT idpersonas,IdTP FROM personas where nombre='" + Nombre + "';";
             ps = objetoConexion.estableceConexion().createStatement();
             ResultSet rs = ps.executeQuery(sql);
@@ -49,7 +50,7 @@ public class CPrestamos {
     public void RegistrarPrestamo(String nombre, Double Valor, String Descripcion) {
         try {
             PreparedStatement ps = null;
-            CConexion objetoConexion = new CConexion(); //                                                                idcuentas, descripcion, Valor, Estado, Cuenta, Id_TipoCuenta, Id_Persona     
+             objetoConexion = new CConexion(); //                                                                idcuentas, descripcion, Valor, Estado, Cuenta, Id_TipoCuenta, Id_Persona     
             String sql = "insert into prestamos( Id_Persona,Id_Tipo_Persona, Valor, descripcion) values('" + Leer_id_X_por_nombre(nombre) + "','" + Id_Tipo_Persona + "','" + Valor + "','" + Descripcion + "')";
             ps = objetoConexion.estableceConexion().prepareStatement(sql);
             ps.executeUpdate(sql);
@@ -63,7 +64,7 @@ public class CPrestamos {
     public Double SumPrestamo(int Id_Persona) {
         try {
             Statement ps = null;
-            CConexion objetoConexion = new CConexion();
+             objetoConexion = new CConexion();
             String sql = "SELECT SUM(Valor) FROM prestamos where Id_Persona=" + Id_Persona + ";";
             ps = objetoConexion.estableceConexion().createStatement();
             ResultSet rs = ps.executeQuery(sql);
@@ -80,7 +81,7 @@ public class CPrestamos {
     public ArrayList<Prestamos> LeerPrestamos(int idPrestamos) {
         try {
             Statement ps = null;
-            CConexion objetoConexion = new CConexion();
+             objetoConexion = new CConexion();
             String sql = "SELECT * FROM prestamos where Id_Persona=" + idPrestamos + ";";
             ps = objetoConexion.estableceConexion().createStatement();
             ResultSet rs = ps.executeQuery(sql);
@@ -110,7 +111,7 @@ public class CPrestamos {
     public void AbonoPrestamos(int u, int Abono, Double suma) {
         int Abonox = Abono;
         ArrayList<Prestamos> gg = LeerPrestamos(u);
-        int cont=0;
+        int cont = 0;
         try {
             if (Abonox <= suma) {
                 Prestamos pres = gg.get(0);
@@ -124,8 +125,8 @@ public class CPrestamos {
                         RemoverPrestamos(pres.getIdPrestamos());
                         Abonox = (int) (Abonox - pres.getValor());
                     }
-                    cont+=1;
-                    pres= gg.get(cont);
+                    cont += 1;
+                    pres = gg.get(cont);
                 }
 
             } else {
@@ -139,7 +140,7 @@ public class CPrestamos {
 
     public void RemoverPrestamos(int id) {
         try {
-            CConexion objetoConexion = new CConexion();
+            objetoConexion = new CConexion();
             PreparedStatement stmt;
             stmt = objetoConexion.estableceConexion().prepareStatement("DELETE FROM prestamos WHERE idPrestamos =" + id);
             stmt.executeUpdate();
@@ -150,7 +151,7 @@ public class CPrestamos {
 
     public void modificarPrestamos(Double Valor, int id, String descripcion) {
         try {
-            CConexion objetoConexion = new CConexion();
+            objetoConexion = new CConexion();
             PreparedStatement stmt;
             stmt = objetoConexion.estableceConexion().prepareStatement("UPDATE prestamos SET Valor=" + Valor + ",descripcion='" + descripcion + "' WHERE idPrestamos=" + id + ";");
             stmt.executeUpdate();
@@ -162,7 +163,7 @@ public class CPrestamos {
     public void listaPrestamos(JTable j) {
         try {
             Statement ps = null;
-            CConexion objetoConexion = new CConexion();
+            objetoConexion = new CConexion();
             String sql = "SELECT * FROM prestamos;";
             ps = objetoConexion.estableceConexion().createStatement();
             ResultSet rs = ps.executeQuery(sql);

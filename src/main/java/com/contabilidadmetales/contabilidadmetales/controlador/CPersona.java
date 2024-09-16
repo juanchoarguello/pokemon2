@@ -21,10 +21,12 @@ import javax.swing.JOptionPane;
  */
 public class CPersona {
 
+    private CConexion objetoConexion;
+
     public Boolean registrarProvedor(persona persona, int Tipo, String pasword) {
         try {
             PreparedStatement ps = null;
-            CConexion objetoConexion = new CConexion();
+            objetoConexion = new CConexion();
             String sql = "insert into personas(IdTP,nombre, Celular, identificacion, TipoDocumento_nombre,Archivo,Descripcion,password) values('" + Tipo + "','" + persona.getNombre() + "','" + persona.getCelular() + "','" + persona.getIdentificacion() + "','" + persona.getTipoDocumento_nombre() + "','" + persona.getArchivoLista() + "','" + persona.getDescripcion() + "','" + pasword + "')";
             ps = objetoConexion.estableceConexion().prepareStatement(sql);
             ps.executeUpdate(sql);
@@ -34,12 +36,12 @@ public class CPersona {
             return false;
         }
 
-    }    
+    }
 
     public persona Leerpersonas(int id) {
         try {
             Statement ps = null;
-            CConexion objetoConexion = new CConexion();
+            objetoConexion = new CConexion();
             String sql = "SELECT * FROM personas where idpersonas=" + id + ";";
             ps = objetoConexion.estableceConexion().createStatement();
             ResultSet rs = ps.executeQuery(sql);
@@ -64,7 +66,7 @@ public class CPersona {
     public ArrayList listaPersonas(int TipoPersona) {
         try {
             Statement ps = null;
-            CConexion objetoConexion = new CConexion();
+            objetoConexion = new CConexion();
             String sql = "SELECT * FROM personas where IdTP=" + TipoPersona + ";";
             ps = objetoConexion.estableceConexion().createStatement();
             ResultSet rs = ps.executeQuery(sql);
@@ -94,7 +96,7 @@ public class CPersona {
     public String listaPresios_idpersonas(int idpersonas) {
         try {
             Statement ps = null;
-            CConexion objetoConexion = new CConexion();
+            objetoConexion = new CConexion();
             String sql = "SELECT Archivo FROM personas where idpersonas=" + idpersonas + ";";
             ps = objetoConexion.estableceConexion().createStatement();
             ResultSet rs = ps.executeQuery(sql);
@@ -108,12 +110,12 @@ public class CPersona {
 
     }
 
-    public void modificarArchivo(String lista,int id) {
+    public void modificarArchivo(String lista, int id) {
         Statement st;
         try {
             CConexion objetoConexion = new CConexion();
             PreparedStatement stmt;
-            stmt = objetoConexion.estableceConexion().prepareStatement("UPDATE personas SET Archivo='"+lista+"' WHERE idpersonas="+id+";");
+            stmt = objetoConexion.estableceConexion().prepareStatement("UPDATE personas SET Archivo='" + lista + "' WHERE idpersonas=" + id + ";");
             int retorno = stmt.executeUpdate();
         } catch (SQLException ex) {
             JOptionPane.showInputDialog(null, "No se han podido actualizar los datos" + ex);

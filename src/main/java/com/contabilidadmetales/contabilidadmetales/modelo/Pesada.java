@@ -17,7 +17,9 @@ public class Pesada {
     public String toString() {
         return "id=" + id + ",  " + Material + "  " + pesada + " X " + valor + " = " + total ;
     }
-   
+   public String toString2() {
+        return Material +" "+ pesada + "X" + valor + "=" + total ;
+    }
     public Pesada(Integer id, String Material, Double pesada, Double valor) {
         this.id = id;
         this.Material = Material;

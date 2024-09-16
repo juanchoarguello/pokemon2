@@ -5,7 +5,6 @@ C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main
 C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\controlador\CInventario.java
 C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\modelo\Cuenta.java
 C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\CConexion.java
-C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\vistas\Filtros.java
 C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\FacturaPdf.java
 C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\controlador\CajaMenorController.java
 C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\controlador\CPersona.java
@@ -22,6 +21,7 @@ C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main
 C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\vistas\ActualizarListaPrecios.java
 C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\modelo\Inventario.java
 C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\modelo\MovimientoCajaMenor.java
+C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\PlaceHolder\PlaceHolder.java
 C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\CajaMenorReporteGenerator.java
 C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\modelo\Prestamos.java
 C:\Users\narut\OneDrive\Documentos\NetBeansProjects\ContabilidadMetales\src\main\java\com\contabilidadmetales\contabilidadmetales\modelo\TipoMovimiento.java

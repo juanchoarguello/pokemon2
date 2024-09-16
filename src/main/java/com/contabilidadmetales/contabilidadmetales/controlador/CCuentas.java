@@ -22,11 +22,11 @@ import javax.swing.table.DefaultTableModel;
  * @author narut
  */
 public class CCuentas {
-
+    private CConexion objetoConexion;
     public int registrarCuenta(Cuenta cuenta, Double abono) {
         try {
             PreparedStatement ps = null;
-            CConexion objetoConexion = new CConexion();
+            objetoConexion = new CConexion();
             String sql = "insert into cuentas(Valor, Estado, Cuenta, Id_TipoCuenta, Id_Persona, abono) values(?, ?, ?, ?, ?, ?)";
             ps = objetoConexion.estableceConexion().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ps.setDouble(1, cuenta.getValor());
@@ -54,7 +54,7 @@ public class CCuentas {
     public Cuenta LeerCuenta(int id) {
         try {
             Statement ps = null;
-            CConexion objetoConexion = new CConexion();
+             objetoConexion = new CConexion();
             String sql = "SELECT * FROM cuentas where idcuentas=" + id + ";";
             ps = objetoConexion.estableceConexion().createStatement();
             ResultSet rs = ps.executeQuery(sql);
@@ -79,7 +79,7 @@ public class CCuentas {
     public ArrayList listaCuentas() {
         try {
             Statement ps = null;
-            CConexion objetoConexion = new CConexion();
+             objetoConexion = new CConexion();
             String sql = "SELECT * FROM cuentas ;";
             ps = objetoConexion.estableceConexion().createStatement();
             ResultSet rs = ps.executeQuery(sql);
@@ -108,7 +108,7 @@ public class CCuentas {
     public void lista_de_Cuentas_x_cobrar(int id, JTable t, int Estado) {
         try {
             Statement ps = null;
-            CConexion objetoConexion = new CConexion();
+             objetoConexion = new CConexion();
             String sql = "SELECT * FROM cuentas where Id_Persona=" + id + " and Estado=0 and Estado=" + Estado + ";";
             ps = objetoConexion.estableceConexion().createStatement();
             ResultSet rs = ps.executeQuery(sql);
@@ -143,7 +143,7 @@ public class CCuentas {
     public void lista_de_Cuentas_x_persona(int id, JTable t, int idTipoCuenta) {
         try {
             Statement ps = null;
-            CConexion objetoConexion = new CConexion();
+             objetoConexion = new CConexion();
             String sql = "SELECT * FROM cuentas where Id_Persona=" + id + " and Id_TipoCuenta=" + idTipoCuenta + ";";
             ps = objetoConexion.estableceConexion().createStatement();
             ResultSet rs = ps.executeQuery(sql);
@@ -184,7 +184,7 @@ public class CCuentas {
 
     public Double SumCuentas_x_cobrar_Ventas(int id) {
         try {
-            CConexion objetoConexion = new CConexion();
+             objetoConexion = new CConexion();
             Connection conexion = objetoConexion.estableceConexion();
             String sql = "SELECT SUM(Valor) FROM cuentas WHERE Id_Persona = ? AND Estado = 0 AND Id_TipoCuenta = 2;";
             PreparedStatement ps = conexion.prepareStatement(sql);
@@ -201,7 +201,7 @@ public class CCuentas {
 
     public Double SumCuentas_x_cobrar_Compras(int id) {
         try {
-            CConexion objetoConexion = new CConexion();
+            objetoConexion = new CConexion();
             Connection conexion = objetoConexion.estableceConexion();
             String sql = "SELECT SUM(Valor) FROM cuentas WHERE Id_Persona = ? AND Estado = 0 AND Id_TipoCuenta = 1;";
             PreparedStatement ps = conexion.prepareStatement(sql);
@@ -219,7 +219,7 @@ public class CCuentas {
     public Boolean modificarCuentaEstado(int id) {
         Statement st;
         try {
-            CConexion objetoConexion = new CConexion();
+            objetoConexion = new CConexion();
             PreparedStatement stmt;
             stmt = objetoConexion.estableceConexion().prepareStatement("UPDATE cuentas SET Estado=1 WHERE idcuentas=" + id + ";");
             int retorno = stmt.executeUpdate();
@@ -236,7 +236,7 @@ public class CCuentas {
 
     public Boolean modificarCuentaValor(int id, Double valor, String cuenta) {
     try {
-        CConexion objetoConexion = new CConexion();
+        objetoConexion = new CConexion();
         PreparedStatement stmt = objetoConexion.estableceConexion().prepareStatement("UPDATE cuentas SET Valor=?, Cuenta=CONCAT(Cuenta, ?) WHERE idcuentas=?");
         stmt.setDouble(1, valor);
         stmt.setString(2, cuenta);
